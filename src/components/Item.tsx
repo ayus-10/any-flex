@@ -1,4 +1,4 @@
-import type { ItemData } from "./Library";
+import { ItemData } from "@/pages";
 import Image from "next/image";
 
 export default function Item({ name, image, genre }: ItemData) {
