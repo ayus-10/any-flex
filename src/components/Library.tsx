@@ -1,15 +1,15 @@
-import { useState } from "react";
 import Item from "./Item";
-import { ItemData } from "@/pages";
+import { AnimeData } from "@/pages";
 
-export default function Library({ content }: { content: ItemData[] }) {
-  const [data, setData] = useState<ItemData[]>(content);
-
+export default function Library({ content }: { content: AnimeData[] }) {
   return (
-    <div className="min-h-screen w-screen bg-zinc-700 py-12">
-      <div className="mx-auto grid max-w-[1280px] grid-cols-1 place-items-center gap-12 px-4 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
-        {data &&
-          data.map((item, index) => (
+    <div className="min-h-screen w-screen bg-zinc-700">
+      <h1 className="p-4 text-center text-3xl font-bold text-white md:p-6 md:text-4xl">
+        Most Popular
+      </h1>
+      <div className="mx-auto grid max-w-[1280px] grid-cols-1 place-items-center gap-12 px-4 py-4 sm:grid-cols-2 md:grid-cols-3 md:py-6 lg:grid-cols-4">
+        {content &&
+          content.map((item, index) => (
             <Item
               key={index}
               name={item.name}
