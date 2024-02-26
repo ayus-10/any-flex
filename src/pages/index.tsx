@@ -3,12 +3,14 @@ import Nav from "@/components/Nav";
 import Head from "next/head";
 
 export type AnimeData = {
+  id: number | null;
   name: string;
   image: string;
   genre: string[];
 };
 
 type FetchedAnimeData = {
+  mal_id: number;
   title: string;
   images: {
     jpg: {
@@ -35,7 +37,13 @@ export async function getStaticProps() {
 
   // Process the fetched data and push it to previously created array
   animeData.forEach((data: FetchedAnimeData) => {
-    const dataObject: AnimeData = { name: "", image: "", genre: [] };
+    const dataObject: AnimeData = {
+      id: null,
+      name: "",
+      image: "",
+      genre: [],
+    };
+    dataObject.id = data.mal_id;
     dataObject.name = data.title;
     dataObject.image = data.images.jpg.large_image_url;
     data.genres.forEach((genre) => {
@@ -74,7 +82,7 @@ export default function Home({
         <title>AnyFlex - Flex your favorite anime</title>
         <meta name="description" content="Flex your favorite anime"></meta>
       </Head>
-      <Nav NavData={NavData} />
+      <Nav genres={NavData} />
       <Library content={LibraryData} />
     </>
   );

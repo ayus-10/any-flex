@@ -12,6 +12,7 @@ export default function Library({ content }: { content: AnimeData[] }) {
           content.map((item, index) => (
             <Item
               key={index}
+              id={item.id}
               name={item.name}
               image={item.image}
               genre={item.genre}

@@ -1,8 +1,11 @@
 import { AnimeData } from "@/pages";
 import Image from "next/image";
+import { useRouter } from "next/router";
 import { FaEye } from "react-icons/fa";
 
-export default function Item({ name, image, genre }: AnimeData) {
+export default function Item({ id, name, image, genre }: AnimeData) {
+  const router = useRouter();
+
   return (
     <div className="flex h-full max-w-[240px] flex-col rounded-lg bg-zinc-800">
       <div className="group relative h-[360px] cursor-pointer ease-in-out after:absolute after:inset-0 after:h-full after:w-full after:rounded-t-lg after:bg-white after:opacity-0 after:duration-300 hover:after:opacity-50">
@@ -14,7 +17,12 @@ export default function Item({ name, image, genre }: AnimeData) {
           alt={name}
           className="h-full rounded-t-lg"
         ></Image>
-        <div className="absolute left-1/2 top-1/2 z-10 hidden -translate-x-1/2 -translate-y-1/2 place-content-center rounded-full bg-zinc-900 p-4 text-2xl text-white duration-300 ease-in-out hover:bg-zinc-600 group-hover:grid">
+        <div
+          onClick={() => {
+            router.push("/anime/" + id);
+          }}
+          className="absolute left-1/2 top-1/2 z-10 hidden -translate-x-1/2 -translate-y-1/2 place-content-center rounded-full bg-zinc-900 p-4 text-2xl text-white duration-300 ease-in-out hover:bg-zinc-600 group-hover:grid"
+        >
           <FaEye />
         </div>
       </div>
