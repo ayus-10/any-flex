@@ -3,7 +3,9 @@ import Image from "next/image";
 import { useRouter } from "next/router";
 import { FaEye } from "react-icons/fa";
 
-export default function Item({ id, name, image, genre }: AnimeData) {
+export default function Item(props: AnimeData) {
+  const { id, name, image, genre } = props;
+
   const router = useRouter();
 
   return (

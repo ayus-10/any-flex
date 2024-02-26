@@ -2,7 +2,14 @@ import { MdAccountCircle } from "react-icons/md";
 import Link from "next/link";
 import { useState } from "react";
 
-export default function Nav({ genres }: { genres: string[] }) {
+type NavProps = {
+  genres?: string[];
+  showNavigationAndSearch: boolean;
+};
+
+export default function Nav(props: NavProps) {
+  const { genres, showNavigationAndSearch } = props;
+
   const [showDropdown, setShowDropdown] = useState(false);
 
   const [search, setSearch] = useState("");
@@ -21,7 +28,9 @@ export default function Nav({ genres }: { genres: string[] }) {
           >
             Home
           </Link>
-          <div className="relative h-full">
+          <div
+            className={`relative h-full ${showNavigationAndSearch ? "block" : "hidden"}`}
+          >
             <span
               className="relative z-20 cursor-pointer py-[100%] text-gray-300 duration-200 ease-in-out hover:text-white"
               onMouseOver={() => setShowDropdown(true)}
@@ -34,7 +43,7 @@ export default function Nav({ genres }: { genres: string[] }) {
               onMouseOver={() => setShowDropdown(true)}
               onMouseOut={() => setShowDropdown(false)}
             >
-              {genres.map((genre, index) => (
+              {genres?.map((genre, index) => (
                 <li key={index}>
                   <button className="w-full rounded-lg bg-transparent px-3 py-1 text-left duration-200 ease-in-out hover:bg-zinc-700">
                     {genre}
@@ -51,7 +60,9 @@ export default function Nav({ genres }: { genres: string[] }) {
           <MdAccountCircle />
         </Link>
       </nav>
-      <div className="sticky inset-0 z-20 w-full border-b-[1px] border-zinc-600 bg-zinc-900 px-4 py-5 text-white">
+      <div
+        className={`sticky inset-0 z-20 w-full border-b-[1px] border-zinc-600 bg-zinc-900 px-4 py-5 text-white ${showNavigationAndSearch ? "block" : "hidden"}`}
+      >
         <div className="mx-auto flex max-w-[1280px] items-center justify-center">
           <input
             onChange={(e) => setSearch(e.target.value)}

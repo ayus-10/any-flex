@@ -26,6 +26,11 @@ type FetchedGenreList = {
   data: { name: string }[];
 };
 
+type HomeProps = {
+  LibraryData: AnimeData[];
+  NavData: string[];
+};
+
 export async function getStaticProps() {
   // Fetch JSON data to be displayed on Library component
   const animeDataRaw = await fetch("https://api.jikan.moe/v4/top/anime");
@@ -69,20 +74,16 @@ export async function getStaticProps() {
   };
 }
 
-export default function Home({
-  LibraryData,
-  NavData,
-}: {
-  LibraryData: AnimeData[];
-  NavData: string[];
-}) {
+export default function Home(props: HomeProps) {
+  const { LibraryData, NavData } = props;
+
   return (
     <>
       <Head>
         <title>AnyFlex - Flex your favorite anime</title>
         <meta name="description" content="Flex your favorite anime"></meta>
       </Head>
-      <Nav genres={NavData} />
+      <Nav genres={NavData} showNavigationAndSearch={true} />
       <Library content={LibraryData} />
     </>
   );
