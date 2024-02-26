@@ -2,12 +2,10 @@ import { MdAccountCircle } from "react-icons/md";
 import Link from "next/link";
 import { useState } from "react";
 
-export default function Nav({ NavData }: { NavData: string[] }) {
+export default function Nav({ genres }: { genres: string[] }) {
   const [showDropdown, setShowDropdown] = useState(false);
 
   const [search, setSearch] = useState("");
-
-  const genreList = NavData;
 
   return (
     <>
@@ -36,7 +34,7 @@ export default function Nav({ NavData }: { NavData: string[] }) {
               onMouseOver={() => setShowDropdown(true)}
               onMouseOut={() => setShowDropdown(false)}
             >
-              {genreList.map((genre, index) => (
+              {genres.map((genre, index) => (
                 <li key={index}>
                   <button className="w-full rounded-lg bg-transparent px-3 py-1 text-left duration-200 ease-in-out hover:bg-zinc-700">
                     {genre}
@@ -53,7 +51,7 @@ export default function Nav({ NavData }: { NavData: string[] }) {
           <MdAccountCircle />
         </Link>
       </nav>
-      <div className="sticky inset-0 z-10 w-full border-b-[1px] border-zinc-600 bg-zinc-900 px-4 py-5 text-white">
+      <div className="sticky inset-0 z-20 w-full border-b-[1px] border-zinc-600 bg-zinc-900 px-4 py-5 text-white">
         <div className="mx-auto flex max-w-[1280px] items-center justify-center">
           <input
             onChange={(e) => setSearch(e.target.value)}
