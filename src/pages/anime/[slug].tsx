@@ -79,7 +79,7 @@ export default function Anime({ animeData }: { animeData: AnimeData }) {
   return (
     <>
       <Nav showNavigationAndSearch={false} />
-      <main className="flex min-h-screen w-screen flex-col bg-zinc-700 text-white">
+      <main className="max-w-screen flex min-h-screen flex-col bg-zinc-700 text-white">
         <div className="mx-4 my-6 rounded-lg bg-zinc-900 px-4 py-6 md:px-16 md:py-12">
           <div className="flex flex-col items-center gap-2 md:flex-row">
             <Image
@@ -123,7 +123,7 @@ export default function Anime({ animeData }: { animeData: AnimeData }) {
               <div className="hidden flex-col items-center justify-center rounded-lg bg-zinc-800 p-4 md:flex">
                 <TbFaceIdError className="text-9xl" />
                 <span className="text-center text-4xl">
-                  Can't find the trailer
+                  {"Can't find the trailer"}
                 </span>
               </div>
             )}
@@ -163,7 +163,7 @@ export default function Anime({ animeData }: { animeData: AnimeData }) {
                   onClick={() => setExpandDescription((prev) => !prev)}
                 >
                   <FaAngleDown
-                    className={`text-2xl duration-300 ease-in-out ${expandDescription ? "rotate-180" : ""}`}
+                    className={`text-2xl duration-300 ease-in-out ${expandDescription ? "rotate-180" : null}`}
                   />
                 </div>
               </div>

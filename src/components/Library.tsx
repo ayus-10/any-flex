@@ -3,7 +3,7 @@ import { AnimeData } from "@/pages";
 
 export default function Library({ content }: { content: AnimeData[] }) {
   return (
-    <main className="min-h-screen w-screen bg-zinc-700">
+    <main className="max-w-screen min-h-screen bg-zinc-700">
       <h1 className="p-4 text-center text-3xl font-bold text-white md:p-6 md:text-4xl">
         Most Popular
       </h1>
