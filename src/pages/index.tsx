@@ -31,7 +31,7 @@ type HomeProps = {
   NavData: string[];
 };
 
-export async function getStaticProps() {
+export const getServerSideProps = async () => {
   // Fetch JSON data to be displayed on Library component
   const animeDataRaw = await fetch("https://api.jikan.moe/v4/top/anime");
   const animeDataParsed = await animeDataRaw.json();
@@ -72,7 +72,7 @@ export async function getStaticProps() {
   return {
     props: { LibraryData: animeDataArray, NavData: genreList },
   };
-}
+};
 
 export default function Home(props: HomeProps) {
   const { LibraryData, NavData } = props;
