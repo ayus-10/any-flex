@@ -1,11 +1,23 @@
 import { MdAccountCircle } from "react-icons/md";
+import { IoMdClose } from "react-icons/io";
 import Link from "next/link";
-import { useState } from "react";
+import { useState, useRef, useEffect } from "react";
+import Image from "next/image";
 
 type NavProps = {
   genres?: string[];
   showNavigationAndSearch: boolean;
 };
+
+type AnimeSearchData = {
+  mal_id: number;
+  title_english: string;
+  images: {
+    webp: {
+      image_url: string;
+    };
+  };
+}[];
 
 export default function Nav(props: NavProps) {
   const { genres, showNavigationAndSearch } = props;
@@ -14,9 +26,32 @@ export default function Nav(props: NavProps) {
 
   const [search, setSearch] = useState("");
 
+  const searchBarRef = useRef<HTMLInputElement>(null);
+
+  const searchBar = searchBarRef.current;
+
+  const [searchData, setSearchData] = useState<AnimeSearchData>();
+
+  useEffect(() => {
+    if (search !== "") {
+      let timeOut = setTimeout(() => fetchSearchData(), 1000);
+      return () => clearTimeout(timeOut);
+    }
+  }, [search]);
+
+  async function fetchSearchData() {
+    const animeSearchDataRaw = await fetch(
+      "https://api.jikan.moe/v4/anime?q=" + search,
+    );
+    const animeSearchData: { data: AnimeSearchData } =
+      await animeSearchDataRaw.json();
+    const topSearchData = animeSearchData.data.splice(0, 4);
+    setSearchData(topSearchData);
+  }
+
   return (
     <>
-      <nav className="flex w-full items-center justify-between bg-zinc-800 px-2 text-white md:px-4">
+      <nav className="relative z-50 flex w-full items-center justify-between bg-zinc-800 px-2 text-white md:px-4">
         <div className="relative flex items-center gap-2 px-4 py-3 md:gap-4">
           <h1 className="cursor-default text-xl font-bold md:px-2 md:text-3xl">
             AnyFlex
@@ -39,7 +74,7 @@ export default function Nav(props: NavProps) {
               Genre
             </span>
             <ul
-              className={`absolute left-1/2 top-[2.5rem] z-30 flex max-h-48 -translate-x-1/2 flex-col gap-2 overflow-y-scroll rounded-lg border-[1px] border-zinc-700 bg-zinc-800 p-3 md:max-h-72 ${showDropdown ? "block" : "hidden"}`}
+              className={`absolute left-1/2 top-[2.5rem] z-30 max-h-48 -translate-x-1/2 flex-col gap-2 overflow-y-scroll rounded-lg border-[1px] border-zinc-700 bg-zinc-800 p-3 md:max-h-72 ${showDropdown ? "flex" : "hidden"}`}
               onMouseOver={() => setShowDropdown(true)}
               onMouseOut={() => setShowDropdown(false)}
             >
@@ -61,15 +96,59 @@ export default function Nav(props: NavProps) {
         </Link>
       </nav>
       <div
-        className={`sticky inset-0 z-20 w-full border-b-[1px] border-zinc-600 bg-zinc-900 px-4 py-5 text-white ${showNavigationAndSearch ? "block" : "hidden"}`}
+        className={`sticky inset-0 z-20 h-[5.05rem] w-full border-b-[1px] border-zinc-600 bg-zinc-900 px-4 py-5 text-white md:h-[5.55rem] ${showNavigationAndSearch ? "flex md:block" : "hidden"}`}
       >
-        <div className="mx-auto flex max-w-[1280px] items-center justify-center">
+        <div className="mx-auto flex w-full max-w-[1280px] items-center justify-between gap-4">
           <input
+            ref={searchBarRef}
             onChange={(e) => setSearch(e.target.value)}
             type="text"
             placeholder="Search"
-            className="w-full rounded-full bg-zinc-800 p-2 opacity-80 outline-none duration-200 ease-in-out focus:opacity-100 md:p-3"
+            className="max-w-[600px] grow rounded-full bg-zinc-800 p-2 opacity-80 outline-none duration-200 ease-in-out hover:opacity-100 focus:opacity-100 md:p-3"
           />
+          <button
+            className="rounded-full bg-zinc-800 p-2 opacity-80 duration-200 ease-in-out hover:opacity-100 md:p-3"
+            onClick={() => {
+              searchBar && (searchBar.value = "");
+              setSearch("");
+            }}
+          >
+            <IoMdClose />
+          </button>
+        </div>
+        <div
+          className={`absolute left-1/2 top-[100%] h-56 w-full max-w-[1280px] -translate-x-1/2 animate-fade-in duration-300 ease-out ${search !== "" ? "block" : "hidden"}`}
+        >
+          <div
+            className={`w-full grid-cols-1 place-content-center gap-3 rounded-b-lg bg-zinc-900 p-3 md:grid-cols-2 ${search !== "" ? "grid" : "hidden"}`}
+          >
+            {searchData ? (
+              searchData.map(
+                (data, index) =>
+                  data.title_english && (
+                    <Link
+                      href={`/anime/${data.mal_id}`}
+                      key={index}
+                      className="inline-flex w-full items-center gap-2 rounded-sm bg-zinc-800 duration-200 ease-in-out hover:bg-zinc-700"
+                    >
+                      <Image
+                        priority={true}
+                        height={75}
+                        className="h-[75px] w-[50px] rounded-sm"
+                        width={50}
+                        src={data.images.webp.image_url}
+                        alt={`Image for ${data.title_english}`}
+                      ></Image>
+                      <span className="font-semibold md:text-lg">
+                        {data.title_english}
+                      </span>
+                    </Link>
+                  ),
+              )
+            ) : (
+              <p>Loading results, please wait</p>
+            )}
+          </div>
         </div>
       </div>
     </>
