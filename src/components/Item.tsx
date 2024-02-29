@@ -9,7 +9,7 @@ export default function Item(props: AnimeData) {
   const router = useRouter();
 
   return (
-    <div className="flex h-full max-w-[240px] flex-col rounded-lg bg-zinc-800">
+    <div className="flex h-full w-[240px] flex-col rounded-lg bg-zinc-800">
       <div className="group relative h-[360px] cursor-pointer ease-in-out after:absolute after:inset-0 after:h-full after:w-full after:rounded-t-lg after:bg-white after:opacity-0 after:duration-300 hover:after:opacity-50">
         <Image
           priority={true}
@@ -17,7 +17,7 @@ export default function Item(props: AnimeData) {
           height={360}
           src={image}
           alt={name}
-          className="h-full rounded-t-lg"
+          className="h-[360px] w-[240px] shrink-0 rounded-t-lg"
         ></Image>
         <div
           onClick={() => {
