@@ -11,9 +11,9 @@ export type AnimeData = {
 
 type FetchedAnimeData = {
   mal_id: number;
-  title: string;
+  title_english: string;
   images: {
-    jpg: {
+    webp: {
       large_image_url: string;
     };
   };
@@ -49,8 +49,8 @@ export const getServerSideProps = async () => {
       genre: [],
     };
     dataObject.id = data.mal_id;
-    dataObject.name = data.title;
-    dataObject.image = data.images.jpg.large_image_url;
+    dataObject.name = data.title_english;
+    dataObject.image = data.images.webp.large_image_url;
     data.genres.forEach((genre) => {
       dataObject.genre.push(genre.name);
     });

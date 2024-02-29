@@ -88,15 +88,15 @@ export default function Anime({ animeData }: { animeData: AnimeData }) {
               width={100}
               height={150}
               className="h-[150px] w-[100px] rounded-sm"
-              alt={`Image for ${animeData.data.title}`}
+              alt={`Image for ${animeData.data.title_english}`}
             ></Image>
             <div className="flex flex-col gap-1">
               <h1 className="text-center text-2xl font-bold md:text-left md:text-3xl">
-                {animeData.data.title}
+                {animeData.data.title_english}
               </h1>
               {animeData.data.title !== animeData.data.title_english && (
                 <h2 className="text-center text-lg font-semibold md:text-left md:text-xl">
-                  {animeData.data.title_english}
+                  {animeData.data.title}
                 </h2>
               )}
               <div className="flex items-center justify-center gap-1 text-lg md:justify-start md:text-xl">
@@ -131,7 +131,9 @@ export default function Anime({ animeData }: { animeData: AnimeData }) {
               <ul className="rounded-lg bg-zinc-800 p-4">
                 <li className="flex w-full justify-between gap-4">
                   <span>Episodes</span>
-                  <span>{animeData.data.episodes}</span>
+                  <span>
+                    {animeData.data.episodes || animeData.data.status}
+                  </span>
                 </li>
                 <li className="flex w-full justify-between gap-4">
                   <span>Status</span>
