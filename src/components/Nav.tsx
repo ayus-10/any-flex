@@ -98,16 +98,16 @@ export default function Nav(props: NavProps) {
       <div
         className={`sticky inset-0 z-20 h-[5.05rem] w-full border-b-[1px] border-zinc-600 bg-zinc-900 px-4 py-5 text-white md:h-[5.55rem] ${showNavigationAndSearch ? "flex md:block" : "hidden"}`}
       >
-        <div className="mx-auto flex w-full max-w-[1280px] items-center justify-between gap-4">
+        <div className="relative mx-auto flex w-full max-w-[900px] items-center justify-center">
           <input
             ref={searchBarRef}
             onChange={(e) => setSearch(e.target.value)}
             type="text"
             placeholder="Search"
-            className="max-w-[600px] grow rounded-full bg-zinc-800 p-2 opacity-80 outline-none duration-200 ease-in-out hover:opacity-100 focus:opacity-100 md:p-3"
+            className="grow rounded-full bg-zinc-800 p-2 opacity-80 outline-none duration-200 ease-in-out hover:opacity-100 focus:opacity-100 md:p-3"
           />
           <button
-            className="rounded-full bg-zinc-800 p-2 opacity-80 duration-200 ease-in-out hover:opacity-100 md:p-3"
+            className={`absolute right-0 h-full rounded-r-full bg-zinc-700 p-2 text-lg duration-200 ease-in-out hover:bg-zinc-600 md:p-3 md:text-xl ${search ? "visible" : "invisible"}`}
             onClick={() => {
               searchBar && (searchBar.value = "");
               setSearch("");
@@ -117,33 +117,32 @@ export default function Nav(props: NavProps) {
           </button>
         </div>
         <div
-          className={`absolute left-1/2 top-[100%] h-56 w-full max-w-[1280px] -translate-x-1/2 animate-fade-in duration-300 ease-out ${search !== "" ? "block" : "hidden"}`}
+          className={`absolute left-1/2 top-[100%] w-full max-w-[900px] -translate-x-1/2 animate-fade-in duration-300 ease-out ${search ? "block" : "hidden"}`}
         >
           <div
-            className={`w-full grid-cols-1 place-content-center gap-3 rounded-b-lg bg-zinc-900 p-3 md:grid-cols-2 ${search !== "" ? "grid" : "hidden"}`}
+            className={`w-full grid-cols-1 place-content-center gap-3 rounded-b-lg border-x-[1px] border-b-[1px] border-zinc-600 bg-zinc-900 p-3 md:grid-cols-2 ${search ? "grid" : "hidden"}`}
           >
             {searchData ? (
-              searchData.map(
-                (data, index) =>
-                  data.title_english && (
-                    <Link
-                      href={`/anime/${data.mal_id}`}
-                      key={index}
-                      className="inline-flex w-full items-center gap-2 rounded-sm bg-zinc-800 duration-200 ease-in-out hover:bg-zinc-700"
-                    >
-                      <Image
-                        priority={true}
-                        height={75}
-                        className="h-[75px] w-[50px] rounded-sm"
-                        width={50}
-                        src={data.images.webp.image_url}
-                        alt={`Image for ${data.title_english}`}
-                      ></Image>
-                      <span className="font-semibold md:text-lg">
-                        {data.title_english}
-                      </span>
-                    </Link>
-                  ),
+              searchData.map((data, index) =>
+                data.title_english ? (
+                  <Link
+                    href={`/anime/${data.mal_id}`}
+                    key={index}
+                    className="inline-flex max-h-[75px] w-full items-center gap-2 rounded-sm bg-zinc-800 duration-200 ease-in-out hover:bg-zinc-700"
+                  >
+                    <Image
+                      priority={true}
+                      height={75}
+                      className="h-[75px] w-[50px] rounded-sm"
+                      width={50}
+                      src={data.images.webp.image_url}
+                      alt={`Image for ${data.title_english}`}
+                    ></Image>
+                    <p className="max-h-full w-full truncate text-ellipsis break-words font-semibold md:text-lg">
+                      {data.title_english}
+                    </p>
+                  </Link>
+                ) : null,
               )
             ) : (
               <p>Loading results, please wait</p>
