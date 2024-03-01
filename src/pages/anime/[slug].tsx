@@ -9,6 +9,7 @@ import {
   TbRating18Plus,
 } from "react-icons/tb";
 import Image from "next/image";
+import Head from "next/head";
 
 type AnimeData = {
   data: {
@@ -78,11 +79,14 @@ export default function Anime({ animeData }: { animeData: AnimeData }) {
 
   return (
     <>
+      <Head>
+        <title>{animeData.data.title_english} - AnyFlex</title>
+      </Head>
       <Nav showNavigationAndSearch={false} />
       <main className="max-w-screen flex min-h-screen flex-col bg-zinc-700 text-white">
         <div className="mx-4 my-6 rounded-lg bg-zinc-900 px-4 py-6 md:px-16 md:py-12">
           <div className="flex w-full flex-col md:flex-row md:justify-between">
-            <div className="flex flex-col items-start gap-2 md:flex-row">
+            <div className="flex flex-col items-center gap-2 md:flex-row md:items-start">
               <Image
                 priority={true}
                 src={animeData.data.images.webp.image_url}
