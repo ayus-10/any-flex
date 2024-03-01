@@ -81,33 +81,50 @@ export default function Anime({ animeData }: { animeData: AnimeData }) {
       <Nav showNavigationAndSearch={false} />
       <main className="max-w-screen flex min-h-screen flex-col bg-zinc-700 text-white">
         <div className="mx-4 my-6 rounded-lg bg-zinc-900 px-4 py-6 md:px-16 md:py-12">
-          <div className="flex flex-col items-center gap-2 md:flex-row">
-            <Image
-              priority={true}
-              src={animeData.data.images.webp.image_url}
-              width={100}
-              height={150}
-              className="h-[150px] w-[100px] rounded-sm"
-              alt={`Image for ${animeData.data.title_english}`}
-            ></Image>
-            <div className="flex flex-col gap-1">
-              <h1 className="text-center text-2xl font-bold md:text-left md:text-3xl">
-                {animeData.data.title_english}
-              </h1>
-              {animeData.data.title !== animeData.data.title_english && (
-                <h2 className="text-center text-lg font-semibold md:text-left md:text-xl">
-                  {animeData.data.title}
-                </h2>
-              )}
-              <div className="flex items-center justify-center gap-1 text-lg md:justify-start md:text-xl">
-                <FaStar className="text-yellow-500" />
-                <span>Score</span>
-                <span>{animeData.data.score}</span>
+          <div className="flex w-full flex-col md:flex-row md:justify-between">
+            <div className="flex flex-col items-start gap-2 md:flex-row">
+              <Image
+                priority={true}
+                src={animeData.data.images.webp.image_url}
+                width={100}
+                height={150}
+                className="h-[150px] w-[100px] rounded-sm"
+                alt={`Image for ${animeData.data.title_english}`}
+              ></Image>
+              <div className="flex flex-col gap-1">
+                <h1 className="text-center text-2xl font-bold md:text-left md:text-3xl">
+                  {animeData.data.title_english}
+                </h1>
+                {animeData.data.title !== animeData.data.title_english && (
+                  <h2 className="text-center text-lg font-semibold md:text-left md:text-xl">
+                    {animeData.data.title}
+                  </h2>
+                )}
+                <div className="flex items-center justify-center gap-1 text-lg md:justify-start md:text-xl">
+                  <FaStar className="text-yellow-500" />
+                  <span>Score</span>
+                  <span>{animeData.data.score}</span>
+                </div>
+                <div className="flex items-center justify-center gap-1 text-lg md:justify-start md:text-xl">
+                  {ratingIcon(animeData.data.rating)}
+                  <span>{animeData.data.rating}</span>
+                </div>
               </div>
-              <div className="flex items-center justify-center gap-1 text-lg md:justify-start md:text-xl">
-                {ratingIcon(animeData.data.rating)}
-                <span>{animeData.data.rating}</span>
-              </div>
+            </div>
+            <div className="flex flex-col items-center gap-1 md:items-end md:gap-2">
+              <h2 className="text-lg font-semibold md:text-left md:text-xl">
+                Genres
+              </h2>
+              <ul className="flex flex-wrap justify-center gap-2 md:max-w-[300px] md:justify-end">
+                {animeData.data.genres.map((item, index) => (
+                  <li
+                    className="rounded-sm bg-zinc-700 px-2 text-gray-300"
+                    key={index}
+                  >
+                    {item.name}
+                  </li>
+                ))}
+              </ul>
             </div>
           </div>
           <p className="my-2 text-center italic text-zinc-400 md:text-start">
@@ -120,7 +137,7 @@ export default function Anime({ animeData }: { animeData: AnimeData }) {
                 className="mx-auto aspect-video w-full max-w-[640px] rounded-lg outline-none md:mx-0"
               ></iframe>
             ) : (
-              <div className="hidden flex-col items-center justify-center rounded-lg bg-zinc-800 p-4 md:flex">
+              <div className="hidden max-h-[360px] flex-col items-center justify-center rounded-lg bg-zinc-800 p-4 md:flex">
                 <TbFaceIdError className="text-9xl" />
                 <span className="text-center text-4xl">
                   {"Can't find the trailer"}
