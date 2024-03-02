@@ -11,6 +11,7 @@ type NavProps = {
 
 type AnimeSearchData = {
   mal_id: number;
+  title: string;
   title_english: string;
   images: {
     webp: {
@@ -101,6 +102,7 @@ export default function Nav(props: NavProps) {
         <div className="relative mx-auto flex w-full max-w-[900px] items-center justify-center">
           <input
             ref={searchBarRef}
+            id="searchBar"
             onChange={(e) => setSearch(e.target.value)}
             type="text"
             placeholder="Search"
@@ -108,6 +110,7 @@ export default function Nav(props: NavProps) {
           />
           <button
             className={`absolute right-0 h-full rounded-r-full bg-zinc-700 p-2 text-lg duration-200 ease-in-out hover:bg-zinc-600 md:p-3 md:text-xl ${search ? "visible" : "invisible"}`}
+            aria-label="Clear search"
             onClick={() => {
               searchBar && (searchBar.value = "");
               setSearch("");
@@ -123,30 +126,31 @@ export default function Nav(props: NavProps) {
             className={`w-full grid-cols-1 place-content-center gap-3 rounded-b-lg border-x-[1px] border-b-[1px] border-zinc-600 bg-zinc-900 p-3 md:grid-cols-2 ${search ? "grid" : "hidden"}`}
           >
             {searchData ? (
-              searchData.map((data, index) =>
-                data.title_english ? (
-                  <Link
-                    href={`/anime/${data.mal_id}`}
-                    key={index}
-                    className="inline-flex max-h-[75px] w-full items-center gap-2 rounded-sm bg-zinc-800 duration-200 ease-in-out hover:bg-zinc-700"
-                  >
-                    <Image
-                      priority={true}
-                      height={75}
-                      className="h-[75px] w-[50px] rounded-sm"
-                      width={50}
-                      src={data.images.webp.image_url}
-                      alt={`Image for ${data.title_english}`}
-                    ></Image>
-                    <p className="max-h-full w-full truncate text-ellipsis break-words font-semibold md:text-lg">
-                      {data.title_english}
-                    </p>
-                  </Link>
-                ) : null,
-              )
+              searchData.map((data, index) => (
+                <Link
+                  href={`/anime/${data.mal_id}`}
+                  key={index}
+                  className="inline-flex max-h-[75px] w-full items-center gap-2 rounded-sm bg-zinc-800 duration-200 ease-in-out hover:bg-zinc-700"
+                >
+                  <Image
+                    priority={true}
+                    height={75}
+                    className="h-[75px] w-[50px] rounded-sm"
+                    width={50}
+                    src={data.images.webp.image_url}
+                    alt={`Image for ${data.title_english || data.title}`}
+                  ></Image>
+                  <p className="max-h-full w-full truncate text-ellipsis break-words font-semibold md:text-lg">
+                    {data.title_english || data.title}
+                  </p>
+                </Link>
+              ))
             ) : (
               <p>Loading results, please wait</p>
             )}
+            {searchData?.length === 0 ? (
+              <p>{"Couldn't find any matches for your search"}</p>
+            ) : null}
           </div>
         </div>
       </div>
