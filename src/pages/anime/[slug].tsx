@@ -85,7 +85,7 @@ export default function Anime({ animeData }: { animeData: AnimeData }) {
       <Nav showNavigationAndSearch={false} />
       <main className="max-w-screen flex min-h-screen flex-col bg-zinc-700 text-white">
         <div className="mx-4 my-6 rounded-lg bg-zinc-900 px-4 py-6 md:px-16 md:py-12">
-          <div className="flex w-full flex-col md:flex-row md:justify-between">
+          <div className="flex w-full flex-col gap-2 md:flex-row md:justify-between">
             <div className="flex flex-col items-center gap-2 md:flex-row md:items-start">
               <Image
                 priority={true}
@@ -104,12 +104,11 @@ export default function Anime({ animeData }: { animeData: AnimeData }) {
                     {animeData.data.title}
                   </h2>
                 )}
-                <div className="flex items-center justify-center gap-1 text-lg md:justify-start md:text-xl">
+                <div className="flex flex-col items-center justify-center text-lg md:flex-row md:justify-start md:gap-1 md:text-xl">
                   <FaStar className="text-yellow-500" />
-                  <span>Score</span>
-                  <span>{animeData.data.score}</span>
+                  <span>Score {animeData.data.score}</span>
                 </div>
-                <div className="flex items-center justify-center gap-1 text-lg md:justify-start md:text-xl">
+                <div className="flex flex-col items-center justify-center text-lg md:flex-row md:justify-start md:gap-1 md:text-xl">
                   {ratingIcon(animeData.data.rating)}
                   <span>{animeData.data.rating}</span>
                 </div>
@@ -141,7 +140,7 @@ export default function Anime({ animeData }: { animeData: AnimeData }) {
                 className="mx-auto aspect-video w-full max-w-[640px] rounded-lg outline-none md:mx-0"
               ></iframe>
             ) : (
-              <div className="hidden max-h-[360px] flex-col items-center justify-center rounded-lg bg-zinc-800 p-4 md:flex">
+              <div className="hidden h-[360px] flex-col items-center justify-center rounded-lg bg-zinc-800 p-4 md:flex">
                 <TbFaceIdError className="text-9xl" />
                 <span className="text-center text-4xl">
                   {"Can't find the trailer"}
