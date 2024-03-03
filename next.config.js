@@ -7,6 +7,12 @@ module.exports = {
         port: "",
         pathname: "/images/anime/**",
       },
+      {
+        protocol: "https",
+        hostname: "cdn.discordapp.com",
+        port: "",
+        pathname: "/avatars/**",
+      },
     ],
   },
 };
