@@ -9,6 +9,7 @@ export const authOptions = {
       authorization: { params: { scope: "identify" } },
     }),
   ],
+  secret: process.env.NEXTAUTH_SECRET,
 };
 
 export default NextAuth(authOptions);
