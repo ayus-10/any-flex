@@ -96,8 +96,9 @@ export default function Nav(props: NavProps) {
         </div>
         {session ? (
           session.user?.image && (
-            <div onClick={() => setShowProfile(true)}>
+            <div>
               <Image
+                onClick={() => setShowProfile(true)}
                 height={0}
                 width={0}
                 className="h-[36px] w-[36px] cursor-pointer rounded-full"
