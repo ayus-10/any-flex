@@ -24,22 +24,27 @@ type AnimeSearchData = {
 export default function Nav(props: NavProps) {
   const { genres, showNavigationAndSearch } = props;
 
-  const { data: session } = useSession();
+  const { data: session, status } = useSession();
 
+  // Used to show/hide user account modal, on clicking profile picture
   const [showProfile, setShowProfile] = useState(false);
 
+  // Used to show/hide genres list, on hovering genres on the nav
   const [showDropdown, setShowDropdown] = useState(false);
 
+  // Used to store value of search input field
   const [search, setSearch] = useState("");
 
+  // Used to clear the search input field value and the state, on clicking the clear search button
   const searchBarRef = useRef<HTMLInputElement>(null);
-
   const searchBar = searchBarRef.current;
 
+  // Used to store data fetched from API
   const [searchData, setSearchData] = useState<AnimeSearchData>();
 
   useEffect(() => {
     if (search !== "") {
+      // Fetch data once every second while search keywords are being typed
       let timeOut = setTimeout(() => fetchSearchData(), 1000);
       return () => clearTimeout(timeOut);
     }
@@ -51,6 +56,8 @@ export default function Nav(props: NavProps) {
     );
     const animeSearchData: { data: AnimeSearchData } =
       await animeSearchDataRaw.json();
+
+    // Select and save only first four result
     const topSearchData = animeSearchData.data.splice(0, 4);
     setSearchData(topSearchData);
   }
@@ -59,15 +66,17 @@ export default function Nav(props: NavProps) {
     <>
       <nav className="relative z-40 flex w-full items-center justify-between bg-zinc-800 px-2 text-white md:px-4">
         <div className="relative flex items-center gap-2 px-4 py-3 md:gap-4">
-          <h1 className="cursor-default text-xl font-bold md:px-2 md:text-3xl">
-            AnyFlex
-          </h1>
+          <Link href={"/"}>
+            <h1 className="cursor-pointer text-xl font-bold md:px-2 md:text-3xl">
+              AnyFlex
+            </h1>
+          </Link>
           <div className="h-[2rem] w-0.5 bg-zinc-600"></div>
           <Link
-            href={"/"}
+            href={"/library"}
             className="cursor-pointer text-gray-300 duration-200 ease-in-out hover:text-white"
           >
-            Home
+            Library
           </Link>
           <div
             className={`relative h-full ${showNavigationAndSearch ? "block" : "hidden"}`}
@@ -94,9 +103,9 @@ export default function Nav(props: NavProps) {
             </ul>
           </div>
         </div>
-        {session ? (
-          session.user?.image && (
-            <div>
+        {status === "authenticated" ? (
+          session?.user?.image && (
+            <>
               <Image
                 onClick={() => setShowProfile(true)}
                 height={0}
@@ -129,7 +138,7 @@ export default function Nav(props: NavProps) {
                       onClick={() => signOut()}
                       className="rounded-sm bg-zinc-700 px-2 py-1 text-xl duration-200 ease-in-out hover:bg-zinc-800"
                     >
-                      Sign Out
+                      Log Out
                     </button>
                   </div>
                   <MdCancel
@@ -138,7 +147,7 @@ export default function Nav(props: NavProps) {
                   />
                 </div>
               </div>
-            </div>
+            </>
           )
         ) : (
           <button
