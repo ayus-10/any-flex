@@ -1,4 +1,4 @@
-import Library from "@/components/Library";
+import ItemsGrid from "@/components/ItemsGrid";
 import Nav from "@/components/Nav";
 import Head from "next/head";
 
@@ -27,12 +27,12 @@ type FetchedGenreList = {
 };
 
 type HomeProps = {
-  LibraryData: AnimeData[];
+  ItemsGridData: AnimeData[];
   NavData: string[];
 };
 
 export const getServerSideProps = async () => {
-  // Fetch JSON data to be displayed on Library component
+  // Fetch JSON data to be displayed on ItemsGrid component
   const animeDataRaw = await fetch("https://api.jikan.moe/v4/top/anime");
   const animeDataParsed = await animeDataRaw.json();
   const animeData = animeDataParsed.data;
@@ -70,12 +70,12 @@ export const getServerSideProps = async () => {
   });
 
   return {
-    props: { LibraryData: animeDataArray, NavData: genreList },
+    props: { ItemsGridData: animeDataArray, NavData: genreList },
   };
 };
 
 export default function Home(props: HomeProps) {
-  const { LibraryData, NavData } = props;
+  const { ItemsGridData, NavData } = props;
 
   return (
     <>
@@ -84,7 +84,7 @@ export default function Home(props: HomeProps) {
         <meta name="description" content="Flex your favorite anime"></meta>
       </Head>
       <Nav genres={NavData} showNavigationAndSearch={true} />
-      <Library content={LibraryData} />
+      <ItemsGrid content={ItemsGridData} />
     </>
   );
 }
