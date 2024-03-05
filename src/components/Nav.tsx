@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useState, useRef, useEffect } from "react";
 import Image from "next/image";
 import { useSession, signIn, signOut } from "next-auth/react";
+import { useRouter } from "next/router";
 
 type NavProps = {
   genres?: string[];
@@ -42,6 +43,9 @@ export default function Nav(props: NavProps) {
   // Used to store data fetched from API
   const [searchData, setSearchData] = useState<AnimeSearchData>();
 
+  // Used to conditionally render either Home or Library button in the nav
+  const { pathname } = useRouter();
+
   useEffect(() => {
     if (search !== "") {
       // Fetch data once every second while search keywords are being typed
@@ -66,17 +70,15 @@ export default function Nav(props: NavProps) {
     <>
       <nav className="relative z-40 flex w-full items-center justify-between bg-zinc-800 px-2 text-white md:px-4">
         <div className="relative flex items-center gap-2 px-4 py-3 md:gap-4">
-          <Link href={"/"}>
-            <h1 className="cursor-pointer text-xl font-bold md:px-2 md:text-3xl">
-              AnyFlex
-            </h1>
-          </Link>
+          <h1 className="cursor-pointer text-xl font-bold md:px-2 md:text-3xl">
+            AnyFlex
+          </h1>
           <div className="h-[2rem] w-0.5 bg-zinc-600"></div>
           <Link
-            href={"/library"}
+            href={pathname === "/" ? "/library" : "/"}
             className="cursor-pointer text-gray-300 duration-200 ease-in-out hover:text-white"
           >
-            Library
+            {pathname === "/" ? "Library" : "Home"}
           </Link>
           <div
             className={`relative h-full ${showNavigationAndSearch ? "block" : "hidden"}`}
