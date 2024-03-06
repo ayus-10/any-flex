@@ -68,40 +68,40 @@ export default function Anime({ animeData }: { animeData: AnimeData }) {
 
   const [showAddToLibrary, setShowAddToLibrary] = useState(false);
 
-  const [episodesCompleted, setEpisodesCompleted] = useState(0);
+  const [loading, setLoading] = useState(false); // Used to display loading bar during backend data processing
 
-  const [loading, setLoading] = useState(false);
+  const episodesInputRef = useRef<HTMLInputElement>(null); // Used to get the value of input field on form submission
 
-  const inputRef = useRef<HTMLInputElement>(null);
-
-  function handleEpisodesCompleted(text: string) {
+  // Used to parse input field value on form submission
+  function getEpisodesCompleted(text: string) {
     const number = parseInt(text);
-    if (!isNaN(number)) {
-      setEpisodesCompleted(number);
+    if (isNaN(number)) {
+      return 0;
     }
+    return number;
   }
 
   function handleAddToLibrary(e: FormEvent<HTMLFormElement>) {
     e.preventDefault();
 
-    if (
-      episodesCompleted === 0 ||
-      episodesCompleted > animeData.data.episodes
-    ) {
+    // Get input field value and parse it to number
+    const episodesInputValue = episodesInputRef.current?.value;
+    const episodesCompleted = getEpisodesCompleted(episodesInputValue || "");
+
+    if (episodesCompleted < 1 || episodesCompleted > animeData.data.episodes) {
       alert("Please enter a valid number of episodes watched");
       return;
     }
-
     if (status !== "authenticated" || !session.user?.name) {
-      alert("Please log in first by clicking the user icon in the navigation");
+      alert("Please login first by clicking the user icon in the navigation");
       return;
     }
 
+    // Prepare JSON data to be sent to the backend API
     const animeLibraryElement = {
       animeId: animeData.data.mal_id,
       episodesCompleted: episodesCompleted,
     };
-
     const userData = {
       username: session.user.name,
       animeLibrary: [animeLibraryElement],
@@ -112,20 +112,23 @@ export default function Anime({ animeData }: { animeData: AnimeData }) {
     axios
       .post("/api/addToLibrary", userData)
       .then((res) => alert(res.data))
-      .catch((err) => alert(err.response.statusText))
+      .catch((err) => {
+        alert("Internal server error");
+        console.error(err);
+      })
       .finally(() => {
         setLoading(false);
-        if (inputRef.current) {
-          inputRef.current.value = "";
+        if (episodesInputRef.current) {
+          episodesInputRef.current.value = ""; // Clear the input field after form submission
         }
       });
   }
 
+  // This function returns an icon component based on the rating text provided
   function ratingIcon(text: string) {
     const rating = text.split(" ")[0];
     switch (rating) {
       case "G":
-        return <TbMoodKid className="text-green-500" />;
       case "PG":
         return <TbMoodKid className="text-green-500" />;
       case "PG-13":
@@ -133,7 +136,6 @@ export default function Anime({ animeData }: { animeData: AnimeData }) {
       case "R":
         return <TbRating18Plus className="text-yellow-500" />;
       case "R+":
-        return <TbRating18Plus className="text-red-500" />;
       case "Rx":
         return <TbRating18Plus className="text-red-500" />;
     }
@@ -197,7 +199,7 @@ export default function Anime({ animeData }: { animeData: AnimeData }) {
               <div className="flex justify-center md:justify-end">
                 {!showAddToLibrary ? (
                   <button
-                    className="flex items-center gap-2 rounded-lg bg-zinc-800 px-3 py-2 text-lg duration-200 ease-in-out hover:bg-zinc-700 md:text-xl"
+                    className="flex items-center gap-2 rounded-lg border-[1px] border-zinc-700 bg-zinc-800 px-3 py-2 text-lg duration-200 ease-in-out hover:bg-zinc-700 md:text-xl"
                     onClick={() => setShowAddToLibrary((prev) => !prev)}
                   >
                     <IoIosAddCircle className="shrink-0 text-xl md:text-2xl" />
@@ -205,19 +207,18 @@ export default function Anime({ animeData }: { animeData: AnimeData }) {
                   </button>
                 ) : (
                   <form
-                    className="flex justify-end gap-[1px]"
+                    className="flex justify-end"
                     onSubmit={handleAddToLibrary}
                   >
                     <input
-                      ref={inputRef}
-                      onChange={(e) => handleEpisodesCompleted(e.target.value)}
-                      className="rounded-l-lg bg-zinc-800 p-2 text-sm outline-none duration-200 ease-in-out hover:bg-zinc-700 focus:bg-zinc-700 sm:text-base md:text-lg"
+                      ref={episodesInputRef}
+                      className="rounded-l-lg border-[1px] border-zinc-700 bg-zinc-800 p-2 text-sm outline-none duration-200 ease-in-out hover:bg-zinc-700 focus:bg-zinc-700 sm:text-base md:text-lg"
                       type="text"
                       placeholder={`Episodes watched out of ${animeData.data.episodes}`}
                     />
                     <button
                       type={loading ? "button" : "submit"}
-                      className="rounded-r-lg bg-zinc-800 p-2 duration-200 ease-in-out hover:bg-zinc-700 sm:text-lg md:text-xl"
+                      className="rounded-r-lg border-[1px] border-zinc-700 bg-zinc-800 p-2 duration-200 ease-in-out hover:bg-zinc-700 sm:text-lg md:text-xl"
                     >
                       {loading ? (
                         <BarLoader
