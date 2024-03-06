@@ -1,6 +1,8 @@
 import Nav from "@/components/Nav";
+import axios from "axios";
 import type { GetServerSideProps } from "next";
-import { useState } from "react";
+import type { FormEvent } from "react";
+import { useRef, useState } from "react";
 import { FaStar, FaAngleDown } from "react-icons/fa";
 import { IoIosAddCircle } from "react-icons/io";
 import {
@@ -11,9 +13,12 @@ import {
 } from "react-icons/tb";
 import Image from "next/image";
 import Head from "next/head";
+import { useSession } from "next-auth/react";
+import { BarLoader } from "react-spinners";
 
 type AnimeData = {
   data: {
+    mal_id: number;
     images: {
       webp: {
         image_url: string;
@@ -57,9 +62,64 @@ export const getServerSideProps = (async ({ params }) => {
 }) satisfies GetServerSideProps<{ animeData: AnimeData }>;
 
 export default function Anime({ animeData }: { animeData: AnimeData }) {
+  const { data: session, status } = useSession();
+
   const [expandDescription, setExpandDescription] = useState(false);
 
   const [showAddToLibrary, setShowAddToLibrary] = useState(false);
+
+  const [episodesCompleted, setEpisodesCompleted] = useState(0);
+
+  const [loading, setLoading] = useState(false);
+
+  const inputRef = useRef<HTMLInputElement>(null);
+
+  function handleEpisodesCompleted(text: string) {
+    const number = parseInt(text);
+    if (!isNaN(number)) {
+      setEpisodesCompleted(number);
+    }
+  }
+
+  function handleAddToLibrary(e: FormEvent<HTMLFormElement>) {
+    e.preventDefault();
+
+    if (
+      episodesCompleted === 0 ||
+      episodesCompleted > animeData.data.episodes
+    ) {
+      alert("Please enter a valid number of episodes watched");
+      return;
+    }
+
+    if (status !== "authenticated" || !session.user?.name) {
+      alert("Please log in first by clicking the user icon in the navigation");
+      return;
+    }
+
+    const animeLibraryElement = {
+      animeId: animeData.data.mal_id,
+      episodesCompleted: episodesCompleted,
+    };
+
+    const userData = {
+      username: session.user.name,
+      animeLibrary: [animeLibraryElement],
+    };
+
+    setLoading(true);
+
+    axios
+      .post("/api/addToLibrary", userData)
+      .then((res) => alert(res.data))
+      .catch((err) => alert(err.response.statusText))
+      .finally(() => {
+        setLoading(false);
+        if (inputRef.current) {
+          inputRef.current.value = "";
+        }
+      });
+  }
 
   function ratingIcon(text: string) {
     const rating = text.split(" ")[0];
@@ -144,16 +204,32 @@ export default function Anime({ animeData }: { animeData: AnimeData }) {
                     <span>Library</span>
                   </button>
                 ) : (
-                  <div className="flex justify-end gap-[1px]">
+                  <form
+                    className="flex justify-end gap-[1px]"
+                    onSubmit={handleAddToLibrary}
+                  >
                     <input
+                      ref={inputRef}
+                      onChange={(e) => handleEpisodesCompleted(e.target.value)}
                       className="rounded-l-lg bg-zinc-800 p-2 text-sm outline-none duration-200 ease-in-out hover:bg-zinc-700 focus:bg-zinc-700 sm:text-base md:text-lg"
                       type="text"
                       placeholder={`Episodes watched out of ${animeData.data.episodes}`}
                     />
-                    <button className="rounded-r-lg bg-zinc-800 p-2 duration-200 ease-in-out hover:bg-zinc-700 sm:text-lg md:text-xl">
-                      Done
+                    <button
+                      type={loading ? "button" : "submit"}
+                      className="rounded-r-lg bg-zinc-800 p-2 duration-200 ease-in-out hover:bg-zinc-700 sm:text-lg md:text-xl"
+                    >
+                      {loading ? (
+                        <BarLoader
+                          color="#fff"
+                          width={44}
+                          className="rounded-full"
+                        />
+                      ) : (
+                        "Done"
+                      )}
                     </button>
-                  </div>
+                  </form>
                 )}
               </div>
             </div>
