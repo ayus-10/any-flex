@@ -2,6 +2,7 @@ import Nav from "@/components/Nav";
 import type { GetServerSideProps } from "next";
 import { useState } from "react";
 import { FaStar, FaAngleDown } from "react-icons/fa";
+import { IoIosAddCircle } from "react-icons/io";
 import {
   TbFaceIdError,
   TbMoodKid,
@@ -33,7 +34,6 @@ type AnimeData = {
     rating: string;
     score: number;
     synopsis: string;
-    background: string;
     genres: {
       name: string;
     }[];
@@ -59,21 +59,23 @@ export const getServerSideProps = (async ({ params }) => {
 export default function Anime({ animeData }: { animeData: AnimeData }) {
   const [expandDescription, setExpandDescription] = useState(false);
 
+  const [showAddToLibrary, setShowAddToLibrary] = useState(false);
+
   function ratingIcon(text: string) {
     const rating = text.split(" ")[0];
     switch (rating) {
       case "G":
-        return <TbMoodKid className="text-2xl text-green-500" />;
+        return <TbMoodKid className="text-green-500" />;
       case "PG":
-        return <TbMoodKid className="text-2xl text-green-500" />;
+        return <TbMoodKid className="text-green-500" />;
       case "PG-13":
-        return <TbRating12Plus className="text-2xl text-yellow-500" />;
+        return <TbRating12Plus className="text-yellow-500" />;
       case "R":
-        return <TbRating18Plus className="text-2xl text-yellow-500" />;
+        return <TbRating18Plus className="text-yellow-500" />;
       case "R+":
-        return <TbRating18Plus className="text-2xl text-red-500" />;
+        return <TbRating18Plus className="text-red-500" />;
       case "Rx":
-        return <TbRating18Plus className="text-2xl text-red-500" />;
+        return <TbRating18Plus className="text-red-500" />;
     }
   }
 
@@ -84,8 +86,8 @@ export default function Anime({ animeData }: { animeData: AnimeData }) {
       </Head>
       <Nav showNavigationAndSearch={false} />
       <main className="max-w-screen flex min-h-screen flex-col bg-zinc-700 text-white">
-        <div className="mx-4 my-6 rounded-lg bg-zinc-900 px-4 py-6 md:px-16 md:py-12">
-          <div className="flex w-full flex-col gap-2 md:flex-row md:justify-between">
+        <div className="mx-4 my-6 flex flex-col gap-4 rounded-lg bg-zinc-900 px-4 py-6 md:px-16 md:py-12">
+          <div className="flex w-full flex-col gap-4 md:flex-row md:justify-between">
             <div className="flex flex-col items-center gap-2 md:flex-row md:items-start">
               <Image
                 priority={true}
@@ -105,35 +107,59 @@ export default function Anime({ animeData }: { animeData: AnimeData }) {
                   </h2>
                 )}
                 <div className="flex flex-col items-center justify-center text-lg md:flex-row md:justify-start md:gap-1 md:text-xl">
-                  <FaStar className="text-yellow-500" />
+                  <FaStar className="shrink-0 text-yellow-500" />
                   <span>Score {animeData.data.score}</span>
                 </div>
                 <div className="flex flex-col items-center justify-center text-lg md:flex-row md:justify-start md:gap-1 md:text-xl">
-                  {ratingIcon(animeData.data.rating)}
+                  <div className="shrink-0 text-2xl">
+                    {ratingIcon(animeData.data.rating)}
+                  </div>
                   <span>{animeData.data.rating}</span>
                 </div>
               </div>
             </div>
-            <div className="flex flex-col items-center gap-1 md:items-end md:gap-2">
-              <h2 className="text-lg font-semibold md:text-left md:text-xl">
-                Genres
-              </h2>
-              <ul className="flex flex-wrap justify-center gap-2 md:max-w-[300px] md:justify-end">
-                {animeData.data.genres.map((item, index) => (
-                  <li
-                    className="rounded-sm bg-zinc-700 px-2 text-gray-300"
-                    key={index}
+            <div className="flex flex-col gap-4">
+              <div className="flex flex-col items-center gap-1 md:items-end md:gap-2">
+                <h2 className="text-lg font-semibold md:text-left md:text-xl">
+                  Genres
+                </h2>
+                <ul className="flex flex-wrap justify-center gap-2 md:max-w-[300px] md:justify-end">
+                  {animeData.data.genres.map((item, index) => (
+                    <li
+                      className="rounded-sm bg-zinc-700 px-2 text-gray-300"
+                      key={index}
+                    >
+                      {item.name}
+                    </li>
+                  ))}
+                </ul>
+              </div>
+              <div className="flex justify-center md:justify-end">
+                {!showAddToLibrary ? (
+                  <button
+                    className="flex items-center gap-2 rounded-lg bg-zinc-800 px-3 py-2 text-lg duration-200 ease-in-out hover:bg-zinc-700 md:text-xl"
+                    onClick={() => setShowAddToLibrary((prev) => !prev)}
                   >
-                    {item.name}
-                  </li>
-                ))}
-              </ul>
+                    <IoIosAddCircle className="shrink-0 text-xl md:text-2xl" />
+                    <span>Library</span>
+                  </button>
+                ) : (
+                  <div className="flex justify-end gap-[1px]">
+                    <input
+                      className="rounded-l-lg bg-zinc-800 p-2 text-sm outline-none duration-200 ease-in-out hover:bg-zinc-700 focus:bg-zinc-700 sm:text-base md:text-lg"
+                      type="text"
+                      placeholder={`Episodes watched out of ${animeData.data.episodes}`}
+                    />
+                    <button className="rounded-r-lg bg-zinc-800 p-2 duration-200 ease-in-out hover:bg-zinc-700 sm:text-lg md:text-xl">
+                      Done
+                    </button>
+                  </div>
+                )}
+              </div>
             </div>
           </div>
-          <p className="my-2 text-center italic text-zinc-400 md:text-start">
-            {animeData.data.background}
-          </p>
-          <div className="my-4 flex flex-col gap-2 md:grid md:grid-cols-2">
+
+          <div className="flex flex-col gap-2 md:grid md:grid-cols-2">
             {animeData.data.trailer.embed_url ? (
               <iframe
                 src={animeData.data.trailer.embed_url}

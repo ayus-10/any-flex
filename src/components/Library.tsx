@@ -6,7 +6,7 @@ export default function Library() {
   const { data: session, status } = useSession();
 
   return (
-    <main className="min-h-screen w-screen overflow-x-hidden bg-zinc-700">
+    <main className="min-h-screen w-full bg-zinc-700">
       {status === "authenticated" ? (
         <div></div>
       ) : (
