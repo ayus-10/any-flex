@@ -75,7 +75,7 @@ export default function Nav(props: NavProps) {
           </h1>
           <div className="h-[2rem] w-0.5 bg-zinc-600"></div>
           <Link
-            href={pathname === "/" ? "/library" : "/"}
+            href={pathname === "/" ? `/library/${session?.user?.name}` : "/"}
             className="cursor-pointer text-gray-300 duration-200 ease-in-out hover:text-white"
           >
             {pathname === "/" ? "Library" : "Home"}
