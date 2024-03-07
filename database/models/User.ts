@@ -5,6 +5,18 @@ const animeData = new Schema({
     type: Number,
     required: true,
   },
+  animeName: {
+    type: String,
+    required: true,
+  },
+  imageURL: {
+    type: String,
+    required: true,
+  },
+  totalEpisodes: {
+    type: Number,
+    required: true,
+  },
   episodesCompleted: {
     type: Number,
     required: true,

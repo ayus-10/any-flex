@@ -100,6 +100,9 @@ export default function Anime({ animeData }: { animeData: AnimeData }) {
     // Prepare JSON data to be sent to the backend API
     const animeLibraryElement = {
       animeId: animeData.data.mal_id,
+      animeName: animeData.data.title_english || animeData.data.title,
+      imageURL: animeData.data.images.webp.image_url,
+      totalEpisodes: animeData.data.episodes,
       episodesCompleted: episodesCompleted,
     };
     const userData = {
@@ -144,7 +147,9 @@ export default function Anime({ animeData }: { animeData: AnimeData }) {
   return (
     <>
       <Head>
-        <title>{animeData.data.title_english} - AnyFlex</title>
+        <title>
+          {animeData.data.title_english || animeData.data.title} - AnyFlex
+        </title>
       </Head>
       <Nav showNavigationAndSearch={false} />
       <main className="max-w-screen flex min-h-screen flex-col bg-zinc-700 text-white">
@@ -157,17 +162,18 @@ export default function Anime({ animeData }: { animeData: AnimeData }) {
                 width={100}
                 height={150}
                 className="h-[150px] w-[100px] rounded-sm"
-                alt={`Image for ${animeData.data.title_english}`}
+                alt={`Image for ${animeData.data.title_english || animeData.data.title}`}
               ></Image>
               <div className="flex flex-col gap-1">
                 <h1 className="text-center text-2xl font-bold md:text-left md:text-3xl">
-                  {animeData.data.title_english}
+                  {animeData.data.title_english || animeData.data.title}
                 </h1>
-                {animeData.data.title !== animeData.data.title_english && (
-                  <h2 className="text-center text-lg font-semibold md:text-left md:text-xl">
-                    {animeData.data.title}
-                  </h2>
-                )}
+                {animeData.data.title_english &&
+                  animeData.data.title !== animeData.data.title_english && (
+                    <h2 className="text-center text-lg font-semibold md:text-left md:text-xl">
+                      {animeData.data.title}
+                    </h2>
+                  )}
                 <div className="flex flex-col items-center justify-center text-lg md:flex-row md:justify-start md:gap-1 md:text-xl">
                   <FaStar className="shrink-0 text-yellow-500" />
                   <span>Score {animeData.data.score}</span>

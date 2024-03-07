@@ -9,6 +9,9 @@ export type UserModel = {
 
 type AnimeLibrary = {
   animeId: number;
+  animeName: string;
+  imageURL: string;
+  totalEpisodes: number;
   episodesCompleted: number;
 };
 
