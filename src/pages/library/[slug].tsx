@@ -26,7 +26,8 @@ export const getServerSideProps: GetServerSideProps = async ({ params }) => {
 
 export default function Library({ libraryData }: { libraryData: UserModel }) {
   const { data: session, status } = useSession();
-  console.log(libraryData);
+
+  const { animeLibrary } = libraryData;
 
   return (
     <>

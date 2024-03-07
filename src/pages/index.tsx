@@ -1,4 +1,4 @@
-import ItemsGrid from "@/components/ItemsGrid";
+import Item from "@/components/Item";
 import Nav from "@/components/Nav";
 import Head from "next/head";
 
@@ -27,7 +27,7 @@ type FetchedGenreList = {
 };
 
 type HomeProps = {
-  ItemsGridData: AnimeData[];
+  ItemsData: AnimeData[];
   NavData: string[];
 };
 
@@ -70,12 +70,12 @@ export const getServerSideProps = async () => {
   });
 
   return {
-    props: { ItemsGridData: animeDataArray, NavData: genreList },
+    props: { ItemsData: animeDataArray, NavData: genreList },
   };
 };
 
 export default function Home(props: HomeProps) {
-  const { ItemsGridData, NavData } = props;
+  const { ItemsData, NavData } = props;
 
   return (
     <>
@@ -84,7 +84,22 @@ export default function Home(props: HomeProps) {
         <meta name="description" content="Flex your favorite anime"></meta>
       </Head>
       <Nav genres={NavData} showNavigationAndSearch={true} />
-      <ItemsGrid content={ItemsGridData} />
+      <main className="max-w-screen min-h-screen bg-zinc-700">
+        <h1 className="p-4 text-center text-3xl font-bold text-white md:p-6 md:text-4xl">
+          Most Popular
+        </h1>
+        <div className="mx-auto grid max-w-[1280px] grid-cols-1 place-items-center gap-12 px-4 py-4 sm:grid-cols-2 md:grid-cols-3 md:py-6 lg:grid-cols-4">
+          {ItemsData?.map((item, index) => (
+            <Item
+              key={index}
+              id={item.id}
+              name={item.name}
+              image={item.image}
+              genre={item.genre}
+            />
+          ))}
+        </div>
+      </main>
     </>
   );
 }

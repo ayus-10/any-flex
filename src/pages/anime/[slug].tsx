@@ -46,7 +46,7 @@ type AnimeData = {
   status: number;
 };
 
-export const getServerSideProps = (async ({ params }) => {
+export const getServerSideProps: GetServerSideProps = async ({ params }) => {
   const animeDataRaw = await fetch(
     "https://api.jikan.moe/v4/anime/" + params?.slug,
   );
@@ -59,9 +59,11 @@ export const getServerSideProps = (async ({ params }) => {
   }
 
   return { props: { animeData } };
-}) satisfies GetServerSideProps<{ animeData: AnimeData }>;
+};
 
 export default function Anime({ animeData }: { animeData: AnimeData }) {
+  const anime = animeData.data;
+
   const { data: session, status } = useSession();
 
   const [expandDescription, setExpandDescription] = useState(false);
@@ -88,7 +90,7 @@ export default function Anime({ animeData }: { animeData: AnimeData }) {
     const episodesInputValue = episodesInputRef.current?.value;
     const episodesCompleted = getEpisodesCompleted(episodesInputValue || "");
 
-    if (episodesCompleted < 1 || episodesCompleted > animeData.data.episodes) {
+    if (episodesCompleted < 1 || episodesCompleted > anime.episodes) {
       alert("Please enter a valid number of episodes watched");
       return;
     }
@@ -99,10 +101,10 @@ export default function Anime({ animeData }: { animeData: AnimeData }) {
 
     // Prepare JSON data to be sent to the backend API
     const animeLibraryElement = {
-      animeId: animeData.data.mal_id,
-      animeName: animeData.data.title_english || animeData.data.title,
-      imageURL: animeData.data.images.webp.image_url,
-      totalEpisodes: animeData.data.episodes,
+      animeId: anime.mal_id,
+      animeName: anime.title_english || anime.title,
+      imageURL: anime.images.webp.image_url,
+      totalEpisodes: anime.episodes,
       episodesCompleted: episodesCompleted,
     };
     const userData = {
@@ -147,9 +149,7 @@ export default function Anime({ animeData }: { animeData: AnimeData }) {
   return (
     <>
       <Head>
-        <title>
-          {animeData.data.title_english || animeData.data.title} - AnyFlex
-        </title>
+        <title>{anime.title_english || anime.title} - AnyFlex</title>
       </Head>
       <Nav showNavigationAndSearch={false} />
       <main className="max-w-screen flex min-h-screen flex-col bg-zinc-700 text-white">
@@ -158,31 +158,30 @@ export default function Anime({ animeData }: { animeData: AnimeData }) {
             <div className="flex flex-col items-center gap-2 md:flex-row md:items-start">
               <Image
                 priority={true}
-                src={animeData.data.images.webp.image_url}
+                src={anime.images.webp.image_url}
                 width={100}
                 height={150}
                 className="h-[150px] w-[100px] rounded-sm"
-                alt={`Image for ${animeData.data.title_english || animeData.data.title}`}
+                alt={`Image for ${anime.title_english || anime.title}`}
               ></Image>
               <div className="flex flex-col gap-1">
                 <h1 className="text-center text-2xl font-bold md:text-left md:text-3xl">
-                  {animeData.data.title_english || animeData.data.title}
+                  {anime.title_english || anime.title}
                 </h1>
-                {animeData.data.title_english &&
-                  animeData.data.title !== animeData.data.title_english && (
-                    <h2 className="text-center text-lg font-semibold md:text-left md:text-xl">
-                      {animeData.data.title}
-                    </h2>
-                  )}
+                {anime.title_english && anime.title !== anime.title_english && (
+                  <h2 className="text-center text-lg font-semibold md:text-left md:text-xl">
+                    {anime.title}
+                  </h2>
+                )}
                 <div className="flex flex-col items-center justify-center text-lg md:flex-row md:justify-start md:gap-1 md:text-xl">
                   <FaStar className="shrink-0 text-yellow-500" />
-                  <span>Score {animeData.data.score}</span>
+                  <span>Score {anime.score}</span>
                 </div>
                 <div className="flex flex-col items-center justify-center text-lg md:flex-row md:justify-start md:gap-1 md:text-xl">
                   <div className="shrink-0 text-2xl">
-                    {ratingIcon(animeData.data.rating)}
+                    {ratingIcon(anime.rating)}
                   </div>
-                  <span>{animeData.data.rating}</span>
+                  <span>{anime.rating}</span>
                 </div>
               </div>
             </div>
@@ -192,7 +191,7 @@ export default function Anime({ animeData }: { animeData: AnimeData }) {
                   Genres
                 </h2>
                 <ul className="flex flex-wrap justify-center gap-2 md:max-w-[300px] md:justify-end">
-                  {animeData.data.genres.map((item, index) => (
+                  {anime.genres.map((item, index) => (
                     <li
                       className="rounded-sm bg-zinc-700 px-2 text-gray-300"
                       key={index}
@@ -220,7 +219,7 @@ export default function Anime({ animeData }: { animeData: AnimeData }) {
                       ref={episodesInputRef}
                       className="rounded-l-lg border-[1px] border-zinc-700 bg-zinc-800 p-2 text-sm outline-none duration-200 ease-in-out hover:bg-zinc-700 focus:bg-zinc-700 sm:text-base md:text-lg"
                       type="text"
-                      placeholder={`Episodes watched out of ${animeData.data.episodes}`}
+                      placeholder={`Episodes watched out of ${anime.episodes}`}
                     />
                     <button
                       type={loading ? "button" : "submit"}
@@ -243,9 +242,9 @@ export default function Anime({ animeData }: { animeData: AnimeData }) {
           </div>
 
           <div className="flex flex-col gap-2 md:grid md:grid-cols-2">
-            {animeData.data.trailer.embed_url ? (
+            {anime.trailer.embed_url ? (
               <iframe
-                src={animeData.data.trailer.embed_url}
+                src={anime.trailer.embed_url}
                 className="mx-auto aspect-video w-full max-w-[640px] rounded-lg outline-none md:mx-0"
               ></iframe>
             ) : (
@@ -260,35 +259,29 @@ export default function Anime({ animeData }: { animeData: AnimeData }) {
               <ul className="rounded-lg bg-zinc-800 p-4">
                 <li className="flex w-full justify-between gap-4">
                   <span>Episodes</span>
-                  <span>
-                    {animeData.data.episodes || animeData.data.status}
-                  </span>
+                  <span>{anime.episodes || anime.status}</span>
                 </li>
                 <li className="flex w-full justify-between gap-4">
                   <span>Status</span>
-                  <span>{animeData.data.status}</span>
+                  <span>{anime.status}</span>
                 </li>
                 <li className="flex w-full justify-between gap-4">
                   <span>Aired from</span>
-                  <span>
-                    {new Date(animeData.data.aired.from).toDateString()}
-                  </span>
+                  <span>{new Date(anime.aired.from).toDateString()}</span>
                 </li>
                 <li className="flex w-full justify-between gap-4">
                   <span>Aired to</span>
-                  <span>
-                    {new Date(animeData.data.aired.to).toDateString()}
-                  </span>
+                  <span>{new Date(anime.aired.to).toDateString()}</span>
                 </li>
                 <li className="flex w-full justify-between gap-4">
                   <span>Duration</span>
-                  <span>{animeData.data.duration}</span>
+                  <span>{anime.duration}</span>
                 </li>
               </ul>
               <div
                 className={`relative flex flex-col overflow-clip rounded-lg bg-zinc-800 duration-300 ease-in-out ${expandDescription ? "h-full" : "h-[200px]"}`}
               >
-                <p className="grow p-4">{animeData.data.synopsis}</p>
+                <p className="grow p-4">{anime.synopsis}</p>
                 <div
                   className={`bottom-0 left-1/2 flex w-full -translate-x-1/2 cursor-pointer justify-center bg-zinc-600 duration-300 ease-in-out hover:bg-zinc-700 ${expandDescription ? "relative" : "absolute"}`}
                   onClick={() => setExpandDescription((prev) => !prev)}

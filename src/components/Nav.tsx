@@ -52,19 +52,19 @@ export default function Nav(props: NavProps) {
       let timeOut = setTimeout(() => fetchSearchData(), 1000);
       return () => clearTimeout(timeOut);
     }
+
+    async function fetchSearchData() {
+      const animeSearchDataRaw = await fetch(
+        "https://api.jikan.moe/v4/anime?q=" + search,
+      );
+      const animeSearchData: { data: AnimeSearchData } =
+        await animeSearchDataRaw.json();
+
+      // Select and save only first four result
+      const topSearchData = animeSearchData.data.splice(0, 4);
+      setSearchData(topSearchData);
+    }
   }, [search]);
-
-  async function fetchSearchData() {
-    const animeSearchDataRaw = await fetch(
-      "https://api.jikan.moe/v4/anime?q=" + search,
-    );
-    const animeSearchData: { data: AnimeSearchData } =
-      await animeSearchDataRaw.json();
-
-    // Select and save only first four result
-    const topSearchData = animeSearchData.data.splice(0, 4);
-    setSearchData(topSearchData);
-  }
 
   return (
     <>
