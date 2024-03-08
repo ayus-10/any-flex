@@ -1,26 +1,11 @@
 import { model, models, Schema } from "mongoose";
 
 const animeData = new Schema({
-  animeId: {
-    type: Number,
-    required: true,
-  },
-  animeName: {
-    type: String,
-    required: true,
-  },
-  imageURL: {
-    type: String,
-    required: true,
-  },
-  totalEpisodes: {
-    type: Number,
-    required: true,
-  },
-  episodesCompleted: {
-    type: Number,
-    required: true,
-  },
+  animeId: Number,
+  animeName: String,
+  imageURL: String,
+  totalEpisodes: Number,
+  episodesCompleted: Number,
 });
 
 const userData = new Schema({

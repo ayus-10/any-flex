@@ -20,8 +20,7 @@ export const getServerSideProps: GetServerSideProps = async ({ params }) => {
     return {
       props: { libraryData },
     };
-  } catch (e) {
-    console.log(e);
+  } catch {
     return {
       notFound: true,
     };
@@ -40,7 +39,7 @@ export default function Library({ libraryData }: { libraryData: UserModel }) {
       </Head>
       <Nav showNavigationAndSearch={false} />
       <main className="min-h-screen w-full bg-zinc-700 text-white">
-        {status === "authenticated" ? (
+        {status === "authenticated" && (
           <div className="flex w-full flex-col items-center gap-4 py-4 md:py-8">
             {animeLibrary.length > 0 ? (
               animeLibrary.map((anime) => (
@@ -83,21 +82,6 @@ export default function Library({ libraryData }: { libraryData: UserModel }) {
                 </div>
               </div>
             )}
-          </div>
-        ) : (
-          <div className="flex justify-center">
-            <div className="flex flex-col items-center gap-4 py-12">
-              <h1 className="text-lg md:text-2xl">
-                You must be logged in to access library
-              </h1>
-              <button
-                onClick={() => signIn("discord")}
-                className="flex items-center gap-1 rounded-md bg-indigo-500 px-3 py-2 font-semibold duration-200 ease-in-out hover:bg-indigo-600 md:gap-2 md:text-lg"
-              >
-                <FaDiscord className="text-xl md:text-2xl" />
-                <span>Login with Discord</span>
-              </button>
-            </div>
           </div>
         )}
       </main>
