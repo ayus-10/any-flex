@@ -42,8 +42,11 @@ export default function Library({ libraryData }: { libraryData: UserModel }) {
         {status === "authenticated" && (
           <div className="flex w-full flex-col items-center gap-4 py-4 md:py-8">
             {animeLibrary.length > 0 ? (
-              animeLibrary.map((anime) => (
-                <div className="flex w-full justify-between border-y-[1px] border-zinc-500 bg-zinc-900 md:w-[90%] lg:w-[75%]">
+              animeLibrary.map((anime, index) => (
+                <div
+                  key={index}
+                  className="flex w-full justify-between border-y-[1px] border-zinc-500 bg-zinc-900 md:w-[90%] lg:w-[75%]"
+                >
                   <div className="relative min-h-[150px] min-w-[100px] md:min-h-[200px] md:min-w-[150px]">
                     <Image
                       fill
