@@ -2,9 +2,10 @@ import { AnimeData } from "@/pages";
 import Image from "next/image";
 import { useRouter } from "next/router";
 import { FaEye } from "react-icons/fa";
+import ProgressBar from "./ProgressBar";
 
 export default function Item(props: AnimeData) {
-  const { id, name, image, genre } = props;
+  const { id, name, image, genre, episodes } = props;
 
   const router = useRouter();
 
@@ -30,18 +31,39 @@ export default function Item(props: AnimeData) {
       </div>
       <div className="flex grow flex-col justify-between">
         <h1 className="p-2 text-lg font-bold text-white md:text-xl">{name}</h1>
-        <div className="pb-8 pt-4">
-          <p className="px-2 font-bold text-white">Genre</p>
-          <ul className="flex flex-wrap gap-2 p-2">
-            {genre.map((item, index) => (
-              <li
-                className="rounded-sm bg-zinc-700 px-2 text-gray-300"
-                key={index}
-              >
-                {item}
-              </li>
-            ))}
-          </ul>
+        <div className="py-4">
+          {genre && (
+            <>
+              <p className="px-2 font-bold text-white">Genre</p>
+              <ul className="flex flex-wrap gap-2 p-2">
+                {genre.map((item, index) => (
+                  <li
+                    className="rounded-sm bg-zinc-700 px-2 text-gray-300"
+                    key={index}
+                  >
+                    {item}
+                  </li>
+                ))}
+              </ul>
+            </>
+          )}
+          {episodes && (
+            <div className="flex flex-col gap-1 px-2">
+              <div className="flex justify-between">
+                <p className="font-bold text-white">Completion</p>
+                <p className="font-bold text-white">
+                  {(episodes.completed / episodes.total) * 100}%
+                </p>
+              </div>
+              <ProgressBar
+                completed={episodes.completed}
+                total={episodes.total}
+              />
+              <p className="italic">
+                {episodes.completed} out of {episodes.total} episodes
+              </p>
+            </div>
+          )}
         </div>
       </div>
     </div>

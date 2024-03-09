@@ -7,7 +7,7 @@ export type UserModel = {
   animeLibrary: AnimeLibrary[];
 };
 
-type AnimeLibrary = {
+export type AnimeLibrary = {
   animeId: number;
   animeName: string;
   imageURL: string;

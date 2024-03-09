@@ -6,7 +6,11 @@ export type AnimeData = {
   id: number | null;
   name: string;
   image: string;
-  genre: string[];
+  genre?: string[];
+  episodes?: {
+    total: number;
+    completed: number;
+  };
 };
 
 type FetchedAnimeData = {
@@ -52,7 +56,7 @@ export const getServerSideProps = async () => {
     dataObject.name = data.title_english;
     dataObject.image = data.images.webp.large_image_url;
     data.genres.forEach((genre) => {
-      dataObject.genre.push(genre.name);
+      dataObject.genre?.push(genre.name);
     });
     animeDataArray.push(dataObject);
   });
