@@ -28,18 +28,21 @@ export const getServerSideProps: GetServerSideProps = async ({ params }) => {
 };
 
 export default function Library({ libraryData }: { libraryData: UserModel }) {
-  const { data: session, status } = useSession();
+  const { status } = useSession();
 
+  // Create an empty state to store fetched data
   const [animeLibrary, setAnimeLibrary] = useState<AnimeLibrary[]>();
 
+  // Store fetched data into state, on page load
   useEffect(() => {
     setAnimeLibrary(libraryData.animeLibrary);
-  }, []);
+  }, [libraryData.animeLibrary]);
 
-  const [search, setSearch] = useState("");
+  const [search, setSearch] = useState(""); // Used to store value of search input field
 
   useEffect(() => {
-    let updatedAnimeLibrary = libraryData.animeLibrary.filter((anime) => {
+    // Filter the library data based on the search value
+    const updatedAnimeLibrary = libraryData.animeLibrary.filter((anime) => {
       return anime.animeName
         .toLocaleLowerCase()
         .includes(search.toLocaleLowerCase());
@@ -61,7 +64,7 @@ export default function Library({ libraryData }: { libraryData: UserModel }) {
         {status === "authenticated" &&
         animeLibrary &&
         animeLibrary.length > 0 ? (
-          <div className="grid w-full grid-cols-1 place-items-center gap-4 py-4 sm:grid-cols-2 md:grid-cols-3 md:py-8 lg:grid-cols-4">
+          <div className="mx-auto grid w-full max-w-[1280px] grid-cols-1 place-items-center gap-4 py-4 sm:grid-cols-2 md:grid-cols-3 md:py-8 lg:grid-cols-4">
             {animeLibrary.map((anime, index) => (
               <Item
                 key={index}
