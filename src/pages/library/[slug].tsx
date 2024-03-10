@@ -38,6 +38,22 @@ export default function Library({ libraryData }: { libraryData: UserModel }) {
     setAnimeLibrary(libraryData.animeLibrary);
   }, [libraryData.animeLibrary]);
 
+  const maxIndex = libraryData.animeLibrary.length;
+  const paginationFactor = 8;
+  const numberOfPages = Math.ceil(maxIndex / paginationFactor);
+
+  const [startIndex, setStartIndex] = useState(0);
+  const [endIndex, setEndIndex] = useState(paginationFactor);
+  const [currentIndex, setCurrentIndex] = useState(0);
+
+  const [paginatedLibrary, setPaginatedLibrary] = useState<AnimeLibrary[]>();
+
+  useEffect(() => {
+    if (animeLibrary) {
+      setPaginatedLibrary(animeLibrary.slice(startIndex, endIndex));
+    }
+  }, [animeLibrary, startIndex, endIndex]);
+
   const [search, setSearch] = useState(""); // Used to store value of search input field
 
   useEffect(() => {
@@ -51,6 +67,30 @@ export default function Library({ libraryData }: { libraryData: UserModel }) {
     setAnimeLibrary(updatedAnimeLibrary);
   }, [search]);
 
+  function handlePageChange(index: number) {
+    if (currentIndex > index) {
+      setCurrentIndex((prev) => prev - 1);
+      previousPage();
+    } else if (currentIndex < index) {
+      setCurrentIndex((prev) => prev + 1);
+      nextPage();
+    }
+  }
+
+  function nextPage() {
+    if (endIndex < maxIndex) {
+      setStartIndex((prev) => prev + paginationFactor);
+      setEndIndex((prev) => prev + paginationFactor);
+    }
+  }
+
+  function previousPage() {
+    if (startIndex > 0) {
+      setStartIndex((prev) => prev - paginationFactor);
+      setEndIndex((prev) => prev - paginationFactor);
+    }
+  }
+
   return (
     <>
       <Head>
@@ -62,22 +102,35 @@ export default function Library({ libraryData }: { libraryData: UserModel }) {
       </div>
       <main className="min-h-screen w-full bg-zinc-700 text-white">
         {status === "authenticated" &&
-        animeLibrary &&
-        animeLibrary.length > 0 ? (
-          <div className="mx-auto grid w-full max-w-[1280px] grid-cols-1 place-items-center gap-4 py-4 sm:grid-cols-2 md:grid-cols-3 md:py-8 lg:grid-cols-4">
-            {animeLibrary.map((anime, index) => (
-              <Item
-                key={index}
-                name={anime.animeName}
-                id={anime.animeId}
-                image={anime.imageURL}
-                episodes={{
-                  total: anime.totalEpisodes,
-                  completed: anime.episodesCompleted,
-                }}
-              />
-            ))}
-          </div>
+        paginatedLibrary &&
+        paginatedLibrary.length > 0 ? (
+          <>
+            <div className="maxIndex-w-[1280px] mx-auto grid w-full grid-cols-1 place-items-center gap-4 py-4 sm:grid-cols-2 md:grid-cols-3 md:py-8 lg:grid-cols-4">
+              {paginatedLibrary.map((anime, index) => (
+                <Item
+                  key={index}
+                  name={anime.animeName}
+                  id={anime.animeId}
+                  image={anime.imageURL}
+                  episodes={{
+                    total: anime.totalEpisodes,
+                    completed: anime.episodesCompleted,
+                  }}
+                />
+              ))}
+            </div>
+            <div className="flex w-full justify-center gap-1 p-12">
+              {Array.from({ length: numberOfPages }).map((_, index) => (
+                <button
+                  onClick={() => handlePageChange(index)}
+                  key={index}
+                  className={`grid h-8 w-8 cursor-pointer place-content-center rounded-[50%] p-2 text-xl font-semibold ${currentIndex === index ? "bg-zinc-800" : "bg-zinc-600"}`}
+                >
+                  {index + 1}
+                </button>
+              ))}
+            </div>
+          </>
         ) : (
           <div className="grid w-full place-content-center py-12">
             <div className="flex flex-col items-center justify-center px-4">
