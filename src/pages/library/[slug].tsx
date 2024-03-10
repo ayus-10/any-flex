@@ -39,12 +39,12 @@ export default function Library({ libraryData }: { libraryData: UserModel }) {
   }, [libraryData.animeLibrary]);
 
   const maxIndex = libraryData.animeLibrary.length;
-  const paginationFactor = 8;
-  const numberOfPages = Math.ceil(maxIndex / paginationFactor);
+  const paginationFactor = 8; // Number of items displayed per page
+  const numberOfPages = Math.ceil(maxIndex / paginationFactor); // Total number of pages needed for pagination
 
-  const [startIndex, setStartIndex] = useState(0);
-  const [endIndex, setEndIndex] = useState(paginationFactor);
-  const [currentIndex, setCurrentIndex] = useState(0);
+  const [startIndex, setStartIndex] = useState(0); // Starting index of the current page data
+  const [endIndex, setEndIndex] = useState(paginationFactor); // Ending index of the current page data
+  const [currentIndex, setCurrentIndex] = useState(0); // Number of page user is currently at
 
   const [paginatedLibrary, setPaginatedLibrary] = useState<AnimeLibrary[]>();
 
@@ -52,7 +52,7 @@ export default function Library({ libraryData }: { libraryData: UserModel }) {
     if (animeLibrary) {
       setPaginatedLibrary(animeLibrary.slice(startIndex, endIndex));
     }
-  }, [animeLibrary, startIndex, endIndex]);
+  }, [animeLibrary, startIndex, endIndex, currentIndex]);
 
   const [search, setSearch] = useState(""); // Used to store value of search input field
 
@@ -64,30 +64,34 @@ export default function Library({ libraryData }: { libraryData: UserModel }) {
         .includes(search.toLocaleLowerCase());
     });
 
+    setCurrentIndex(0); // Switch to first page while searching
+
     setAnimeLibrary(updatedAnimeLibrary);
   }, [search]);
 
   function handlePageChange(index: number) {
     if (currentIndex > index) {
-      setCurrentIndex((prev) => prev - 1);
-      previousPage();
+      const difference = currentIndex - index;
+      setCurrentIndex((prev) => prev - difference);
+      previousPage(difference);
     } else if (currentIndex < index) {
-      setCurrentIndex((prev) => prev + 1);
-      nextPage();
+      const difference = index - currentIndex;
+      setCurrentIndex((prev) => prev + difference);
+      nextPage(difference);
     }
   }
 
-  function nextPage() {
+  function nextPage(difference: number) {
     if (endIndex < maxIndex) {
-      setStartIndex((prev) => prev + paginationFactor);
-      setEndIndex((prev) => prev + paginationFactor);
+      setStartIndex((prev) => prev + paginationFactor * difference);
+      setEndIndex((prev) => prev + paginationFactor * difference);
     }
   }
 
-  function previousPage() {
+  function previousPage(difference: number) {
     if (startIndex > 0) {
-      setStartIndex((prev) => prev - paginationFactor);
-      setEndIndex((prev) => prev - paginationFactor);
+      setStartIndex((prev) => prev - paginationFactor * difference);
+      setEndIndex((prev) => prev - paginationFactor * difference);
     }
   }
 
