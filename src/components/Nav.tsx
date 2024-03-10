@@ -1,30 +1,15 @@
 import { MdAccountCircle, MdCancel } from "react-icons/md";
-import { IoMdClose } from "react-icons/io";
 import Link from "next/link";
-import { useState, useRef, useEffect } from "react";
+import { useState } from "react";
 import Image from "next/image";
 import { useSession, signIn, signOut } from "next-auth/react";
 import { useRouter } from "next/router";
 
 type NavProps = {
   genres?: string[];
-  showNavigationAndSearch: boolean;
 };
 
-type AnimeSearchData = {
-  mal_id: number;
-  title: string;
-  title_english: string;
-  images: {
-    webp: {
-      image_url: string;
-    };
-  };
-}[];
-
-export default function Nav(props: NavProps) {
-  const { genres, showNavigationAndSearch } = props;
-
+export default function Nav({ genres }: NavProps) {
   const { data: session, status } = useSession();
 
   // Used to show/hide user account modal, on clicking profile picture
@@ -33,38 +18,8 @@ export default function Nav(props: NavProps) {
   // Used to show/hide genres list, on hovering genres on the nav
   const [showDropdown, setShowDropdown] = useState(false);
 
-  // Used to store value of search input field
-  const [search, setSearch] = useState("");
-
-  // Used to clear the search input field value and the state, on clicking the clear search button
-  const searchBarRef = useRef<HTMLInputElement>(null);
-  const searchBar = searchBarRef.current;
-
-  // Used to store data fetched from API
-  const [searchData, setSearchData] = useState<AnimeSearchData>();
-
   // Used to conditionally render either Home or Library button in the nav
   const { pathname } = useRouter();
-
-  useEffect(() => {
-    if (search !== "") {
-      // Fetch data once every second while search keywords are being typed
-      let timeOut = setTimeout(() => fetchSearchData(), 1000);
-      return () => clearTimeout(timeOut);
-    }
-
-    async function fetchSearchData() {
-      const animeSearchDataRaw = await fetch(
-        "https://api.jikan.moe/v4/anime?q=" + search,
-      );
-      const animeSearchData: { data: AnimeSearchData } =
-        await animeSearchDataRaw.json();
-
-      // Select and save only first four result
-      const topSearchData = animeSearchData.data.splice(0, 4);
-      setSearchData(topSearchData);
-    }
-  }, [search]);
 
   return (
     <>
@@ -80,9 +35,7 @@ export default function Nav(props: NavProps) {
           >
             {pathname === "/" ? "Library" : "Home"}
           </Link>
-          <div
-            className={`relative h-full ${showNavigationAndSearch ? "block" : "hidden"}`}
-          >
+          <div className={`relative h-full ${genres ? "block" : "hidden"}`}>
             <span
               className="relative z-20 cursor-pointer py-[100%] text-gray-300 duration-200 ease-in-out hover:text-white"
               onMouseOver={() => setShowDropdown(true)}
@@ -160,64 +113,6 @@ export default function Nav(props: NavProps) {
           </button>
         )}
       </nav>
-      <div
-        className={`sticky inset-0 z-20 h-[5.05rem] w-full border-b-[1px] border-zinc-600 bg-zinc-900 px-4 py-5 text-white md:h-[5.55rem] ${showNavigationAndSearch ? "flex md:block" : "hidden"}`}
-      >
-        <div className="relative mx-auto flex w-full max-w-[900px] items-center justify-center">
-          <input
-            ref={searchBarRef}
-            id="searchBar"
-            onChange={(e) => setSearch(e.target.value)}
-            type="text"
-            placeholder="Search"
-            className="grow rounded-full bg-zinc-800 p-2 opacity-80 outline-none duration-200 ease-in-out hover:opacity-100 focus:opacity-100 md:p-3"
-          />
-          <button
-            className={`absolute right-0 h-full rounded-r-full bg-zinc-700 p-2 text-lg duration-200 ease-in-out hover:bg-zinc-600 md:p-3 md:text-xl ${search ? "visible" : "invisible"}`}
-            aria-label="Clear search"
-            onClick={() => {
-              searchBar && (searchBar.value = "");
-              setSearch("");
-            }}
-          >
-            <IoMdClose />
-          </button>
-        </div>
-        <div
-          className={`absolute left-1/2 top-[100%] w-full max-w-[900px] -translate-x-1/2 animate-fade-in duration-300 ease-out ${search ? "block" : "hidden"}`}
-        >
-          <div
-            className={`w-full grid-cols-1 place-content-center gap-3 rounded-b-lg border-x-[1px] border-b-[1px] border-zinc-600 bg-zinc-900 p-3 md:grid-cols-2 ${search ? "grid" : "hidden"}`}
-          >
-            {searchData ? (
-              searchData.map((data, index) => (
-                <Link
-                  href={`/anime/${data.mal_id}`}
-                  key={index}
-                  className="inline-flex max-h-[75px] w-full items-center gap-2 rounded-sm bg-zinc-800 duration-200 ease-in-out hover:bg-zinc-700"
-                >
-                  <Image
-                    priority={true}
-                    height={75}
-                    className="h-[75px] w-[50px] rounded-sm"
-                    width={50}
-                    src={data.images.webp.image_url}
-                    alt={`Image for ${data.title_english || data.title}`}
-                  ></Image>
-                  <p className="max-h-full w-full truncate text-ellipsis break-words font-semibold md:text-lg">
-                    {data.title_english || data.title}
-                  </p>
-                </Link>
-              ))
-            ) : (
-              <p>Loading results, please wait</p>
-            )}
-            {searchData?.length === 0 ? (
-              <p>{"Couldn't find any matches for your search"}</p>
-            ) : null}
-          </div>
-        </div>
-      </div>
     </>
   );
 }

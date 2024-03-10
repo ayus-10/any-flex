@@ -151,7 +151,7 @@ export default function Anime({ animeData }: { animeData: AnimeData }) {
       <Head>
         <title>{anime.title_english || anime.title} - AnyFlex</title>
       </Head>
-      <Nav showNavigationAndSearch={false} />
+      <Nav />
       <main className="max-w-screen flex min-h-screen flex-col bg-zinc-700 text-white">
         <div className="mx-4 my-6 flex flex-col gap-4 rounded-lg bg-zinc-900 px-4 py-6 md:px-16 md:py-12">
           <div className="flex w-full flex-col gap-4 md:flex-row md:justify-between">

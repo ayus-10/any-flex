@@ -52,7 +52,7 @@ export default function Item(props: AnimeData) {
               <div className="flex justify-between">
                 <p className="font-bold text-white">Completion</p>
                 <p className="font-bold text-white">
-                  {(episodes.completed / episodes.total) * 100}%
+                  {Math.floor((episodes.completed / episodes.total) * 100)}%
                 </p>
               </div>
               <ProgressBar

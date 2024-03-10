@@ -1,3 +1,4 @@
+import AnimeSearch from "@/components/AnimeSearch";
 import Item from "@/components/Item";
 import Nav from "@/components/Nav";
 import Head from "next/head";
@@ -87,7 +88,8 @@ export default function Home(props: HomeProps) {
         <title>AnyFlex - Flex your favorite anime</title>
         <meta name="description" content="Flex your favorite anime"></meta>
       </Head>
-      <Nav genres={NavData} showNavigationAndSearch={true} />
+      <Nav genres={NavData} />
+      <AnimeSearch />
       <main className="max-w-screen min-h-screen bg-zinc-700">
         <h1 className="p-4 text-center text-3xl font-bold text-white md:p-6 md:text-4xl">
           Most Popular
