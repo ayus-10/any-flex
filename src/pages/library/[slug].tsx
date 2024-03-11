@@ -109,7 +109,7 @@ export default function Library({ libraryData }: { libraryData: UserModel }) {
         paginatedLibrary &&
         paginatedLibrary.length > 0 ? (
           <>
-            <div className="maxIndex-w-[1280px] mx-auto grid w-full grid-cols-1 place-items-center gap-4 py-4 sm:grid-cols-2 md:grid-cols-3 md:py-8 lg:grid-cols-4">
+            <div className="mx-auto grid w-full max-w-[1280px] grid-cols-1 place-items-center gap-4 py-4 sm:grid-cols-2 md:grid-cols-3 md:py-8 lg:grid-cols-4">
               {paginatedLibrary.map((anime, index) => (
                 <Item
                   key={index}
