@@ -2,7 +2,7 @@ import Nav from "@/components/Nav";
 import axios from "axios";
 import type { GetServerSideProps } from "next";
 import type { FormEvent } from "react";
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { FaStar, FaAngleDown } from "react-icons/fa";
 import { IoIosAddCircle } from "react-icons/io";
 import {
@@ -15,6 +15,7 @@ import Image from "next/image";
 import Head from "next/head";
 import { useSession } from "next-auth/react";
 import { BarLoader } from "react-spinners";
+import ToastNotification from "@/components/ToastNotification";
 
 type AnimeData = {
   data: {
@@ -46,6 +47,11 @@ type AnimeData = {
   status: number;
 };
 
+export type ToastMessageProps = {
+  text: string;
+  type: "success" | "error" | "";
+};
+
 export const getServerSideProps: GetServerSideProps = async ({ params }) => {
   const animeDataRaw = await fetch(
     "https://api.jikan.moe/v4/anime/" + params?.slug,
@@ -70,6 +76,18 @@ export default function Anime({ animeData }: { animeData: AnimeData }) {
 
   const [showAddToLibrary, setShowAddToLibrary] = useState(false);
 
+  const [message, setMessage] = useState<ToastMessageProps>({
+    text: "",
+    type: "",
+  });
+
+  useEffect(() => {
+    let timeOut = setTimeout(() => {
+      setMessage({ text: "", type: "" });
+    }, 4000);
+    return () => clearTimeout(timeOut);
+  }, [message]);
+
   const [loading, setLoading] = useState(false); // Used to display loading bar during backend data processing
 
   const episodesInputRef = useRef<HTMLInputElement>(null); // Used to get the value of input field on form submission
@@ -91,11 +109,17 @@ export default function Anime({ animeData }: { animeData: AnimeData }) {
     const episodesCompleted = getEpisodesCompleted(episodesInputValue || "");
 
     if (episodesCompleted < 1 || episodesCompleted > anime.episodes) {
-      alert("Please enter a valid number of episodes watched");
+      setMessage({
+        text: "Please enter a valid number of episodes watched",
+        type: "error",
+      });
       return;
     }
     if (status !== "authenticated" || !session.user?.name) {
-      alert("Please login first by clicking the user icon in the navigation");
+      setMessage({
+        text: "Please login first by clicking the user icon in the navigation",
+        type: "error",
+      });
       return;
     }
 
@@ -116,9 +140,9 @@ export default function Anime({ animeData }: { animeData: AnimeData }) {
 
     axios
       .post("/api/addToLibrary", userData)
-      .then((res) => alert(res.data))
+      .then((res) => setMessage({ text: res.data, type: "success" }))
       .catch((err) => {
-        alert("Internal server error");
+        setMessage({ text: "Internal server error", type: "error" });
         console.error(err);
       })
       .finally(() => {
@@ -151,6 +175,7 @@ export default function Anime({ animeData }: { animeData: AnimeData }) {
       <Head>
         <title>{anime.title_english || anime.title} - AnyFlex</title>
       </Head>
+      {message.text && message.type && <ToastNotification message={message} />}
       <Nav />
       <main className="max-w-screen flex min-h-screen flex-col bg-zinc-700 text-white">
         <div className="mx-4 my-6 flex flex-col gap-4 rounded-lg bg-zinc-900 px-4 py-6 md:px-16 md:py-12">
