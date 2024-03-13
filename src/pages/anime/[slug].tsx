@@ -2,7 +2,7 @@ import Nav from "@/components/Nav";
 import axios from "axios";
 import type { GetServerSideProps } from "next";
 import type { FormEvent } from "react";
-import { useEffect, useRef, useState } from "react";
+import { useRef, useState } from "react";
 import { FaStar, FaAngleDown } from "react-icons/fa";
 import { IoIosAddCircle } from "react-icons/io";
 import { RiEditCircleFill } from "react-icons/ri";
@@ -18,6 +18,7 @@ import { useSession } from "next-auth/react";
 import { BarLoader } from "react-spinners";
 import ToastNotification from "@/components/ToastNotification";
 import { useSearchParams } from "next/navigation";
+import useMessage from "@/hooks/useMessage";
 
 type AnimeData = {
   data: {
@@ -49,11 +50,6 @@ type AnimeData = {
   status: number;
 };
 
-export type ToastMessageProps = {
-  text: string;
-  type: "success" | "error" | "";
-};
-
 export const getServerSideProps: GetServerSideProps = async ({ params }) => {
   const animeDataRaw = await fetch(
     "https://api.jikan.moe/v4/anime/" + params?.slug,
@@ -78,17 +74,7 @@ export default function Anime({ animeData }: { animeData: AnimeData }) {
 
   const [showAddToLibrary, setShowAddToLibrary] = useState(false);
 
-  const [message, setMessage] = useState<ToastMessageProps>({
-    text: "",
-    type: "",
-  });
-
-  useEffect(() => {
-    let timeOut = setTimeout(() => {
-      setMessage({ text: "", type: "" });
-    }, 4000);
-    return () => clearTimeout(timeOut);
-  }, [message]);
+  const [message, setMessage] = useMessage();
 
   // This url param is used to conditionally render "Add" or "Edit" button
   const editParam = useSearchParams();
