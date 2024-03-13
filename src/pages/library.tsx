@@ -1,4 +1,3 @@
-import { getSession } from "next-auth/react";
 import Nav from "@/components/Nav";
 import Head from "next/head";
 import { GetServerSideProps } from "next";
@@ -8,10 +7,14 @@ import { TbFaceIdError } from "react-icons/tb";
 import Item from "@/components/Item";
 import SearchBar from "@/components/SearchBar";
 import { useEffect, useState } from "react";
+import useMessage from "@/hooks/useMessage";
+import ToastNotification from "@/components/ToastNotification";
+import { getServerSession } from "next-auth";
+import { authOptions } from "./api/auth/[...nextauth]";
 
-export const getServerSideProps: GetServerSideProps = async (context) => {
+export const getServerSideProps: GetServerSideProps = async ({ req, res }) => {
   try {
-    const session = await getSession(context);
+    const session = await getServerSession(req, res, authOptions);
     if (session?.user?.name) {
       const username = session.user.name;
       const response = await axios.post(
@@ -79,6 +82,8 @@ export default function Library({ libraryData }: { libraryData: UserModel }) {
     setAnimeLibrary(updatedAnimeLibrary);
   }, [search]);
 
+  const [message, setMessage] = useMessage();
+
   function handlePageChange(index: number) {
     if (currentIndex > index) {
       const difference = currentIndex - index;
@@ -115,19 +120,25 @@ export default function Library({ libraryData }: { libraryData: UserModel }) {
         <SearchBar search={search} setSearch={setSearch} />
       </div>
       <main className="min-h-screen w-full bg-zinc-700 text-white">
+        {message.text && message.type && (
+          <ToastNotification message={message} />
+        )}
         {paginatedLibrary && paginatedLibrary.length > 0 ? (
           <>
             <div className="mx-auto grid w-full max-w-[1280px] grid-cols-1 place-items-center gap-4 py-4 sm:grid-cols-2 md:grid-cols-3 md:py-8 lg:grid-cols-4">
               {paginatedLibrary.map((anime, index) => (
                 <Item
                   key={index}
-                  name={anime.animeName}
-                  id={anime.animeId}
-                  image={anime.imageURL}
-                  episodes={{
-                    total: anime.totalEpisodes,
-                    completed: anime.episodesCompleted,
+                  animeData={{
+                    name: anime.animeName,
+                    id: anime.animeId,
+                    image: anime.imageURL,
+                    episodes: {
+                      total: anime.totalEpisodes,
+                      completed: anime.episodesCompleted,
+                    },
                   }}
+                  setMessage={setMessage}
                 />
               ))}
             </div>

@@ -98,10 +98,12 @@ export default function Home(props: HomeProps) {
           {ItemsData?.map((item, index) => (
             <Item
               key={index}
-              id={item.id}
-              name={item.name}
-              image={item.image}
-              genre={item.genre}
+              animeData={{
+                id: item.id,
+                name: item.name,
+                image: item.image,
+                genre: item.genre,
+              }}
             />
           ))}
         </div>
