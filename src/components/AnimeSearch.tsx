@@ -55,7 +55,7 @@ export default function AnimeSearch() {
               <Link
                 href={`/anime/${data.mal_id}`}
                 key={index}
-                className="inline-flex max-h-[75px] w-full items-center gap-2 rounded-sm bg-zinc-800 duration-200 ease-in-out hover:bg-zinc-700"
+                className="inline-flex max-h-[75px] w-full items-center rounded-sm bg-zinc-800 duration-200 ease-in-out hover:bg-zinc-700"
               >
                 <Image
                   priority={true}
@@ -65,7 +65,7 @@ export default function AnimeSearch() {
                   src={data.images.webp.image_url}
                   alt={`Image for ${data.title_english || data.title}`}
                 ></Image>
-                <p className="max-h-full w-full truncate text-ellipsis break-words font-semibold md:text-lg">
+                <p className="line-clamp-2 max-h-full w-full px-2 font-semibold md:text-lg">
                   {data.title_english || data.title}
                 </p>
               </Link>

@@ -5,6 +5,7 @@ import type { FormEvent } from "react";
 import { useEffect, useRef, useState } from "react";
 import { FaStar, FaAngleDown } from "react-icons/fa";
 import { IoIosAddCircle } from "react-icons/io";
+import { RiEditCircleFill } from "react-icons/ri";
 import {
   TbFaceIdError,
   TbMoodKid,
@@ -16,6 +17,7 @@ import Head from "next/head";
 import { useSession } from "next-auth/react";
 import { BarLoader } from "react-spinners";
 import ToastNotification from "@/components/ToastNotification";
+import { useSearchParams } from "next/navigation";
 
 type AnimeData = {
   data: {
@@ -87,6 +89,10 @@ export default function Anime({ animeData }: { animeData: AnimeData }) {
     }, 4000);
     return () => clearTimeout(timeOut);
   }, [message]);
+
+  // This url param is used to conditionally render "Add" or "Edit" button
+  const editParam = useSearchParams();
+  const edit = editParam.get("edit");
 
   const [loading, setLoading] = useState(false); // Used to display loading bar during backend data processing
 
@@ -232,8 +238,17 @@ export default function Anime({ animeData }: { animeData: AnimeData }) {
                     className="flex items-center gap-2 rounded-lg border-[1px] border-zinc-700 bg-zinc-800 px-3 py-2 text-lg duration-200 ease-in-out hover:bg-zinc-700 md:text-xl"
                     onClick={() => setShowAddToLibrary((prev) => !prev)}
                   >
-                    <IoIosAddCircle className="shrink-0 text-xl md:text-2xl" />
-                    <span>Library</span>
+                    <div className="text-xl md:text-2xl">
+                      {
+                        // This conditional rendering is just for user convenience
+                        edit === "true" ? (
+                          <RiEditCircleFill className="shrink-0" />
+                        ) : (
+                          <IoIosAddCircle className="shrink-0" />
+                        )
+                      }
+                    </div>
+                    <span>{edit === "true" ? "Edit" : "Add"}</span>
                   </button>
                 ) : (
                   <form

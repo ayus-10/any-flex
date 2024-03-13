@@ -64,7 +64,7 @@ export default function Library({ libraryData }: { libraryData: UserModel }) {
         .includes(search.toLocaleLowerCase());
     });
 
-    setCurrentIndex(0); // Switch to first page while searching
+    handlePageChange(0); // Switch to first page while searching
 
     setAnimeLibrary(updatedAnimeLibrary);
   }, [search]);
@@ -105,9 +105,7 @@ export default function Library({ libraryData }: { libraryData: UserModel }) {
         <SearchBar search={search} setSearch={setSearch} />
       </div>
       <main className="min-h-screen w-full bg-zinc-700 text-white">
-        {status === "authenticated" &&
-        paginatedLibrary &&
-        paginatedLibrary.length > 0 ? (
+        {paginatedLibrary && paginatedLibrary.length > 0 ? (
           <>
             <div className="mx-auto grid w-full max-w-[1280px] grid-cols-1 place-items-center gap-4 py-4 sm:grid-cols-2 md:grid-cols-3 md:py-8 lg:grid-cols-4">
               {paginatedLibrary.map((anime, index) => (
@@ -141,7 +139,7 @@ export default function Library({ libraryData }: { libraryData: UserModel }) {
               <TbFaceIdError className="text-9xl" />
               <h1 className="text-center text-2xl font-semibold md:text-4xl">
                 {libraryData.animeLibrary.length > 0
-                  ? `Can't locate "${search}" in your library`
+                  ? `Can't locate '${search}' in your library`
                   : "Your library seems to be empty"}
               </h1>
             </div>
