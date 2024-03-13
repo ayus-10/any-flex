@@ -1,35 +1,45 @@
-import { useSession } from "next-auth/react";
+import { getSession } from "next-auth/react";
 import Nav from "@/components/Nav";
 import Head from "next/head";
 import { GetServerSideProps } from "next";
 import axios from "axios";
-import { AnimeLibrary, UserModel } from "../api/addToLibrary";
+import { AnimeLibrary, UserModel } from "./api/addToLibrary";
 import { TbFaceIdError } from "react-icons/tb";
 import Item from "@/components/Item";
 import SearchBar from "@/components/SearchBar";
 import { useEffect, useState } from "react";
 
-export const getServerSideProps: GetServerSideProps = async ({ params }) => {
+export const getServerSideProps: GetServerSideProps = async (context) => {
   try {
-    const username = params?.slug;
-    const response = await axios.post(
-      `${process.env.BASE_URL}api/retrieveLibrary`,
-      { username },
-    );
-    const libraryData: UserModel = response.data.data;
+    const session = await getSession(context);
+    if (session?.user?.name) {
+      const username = session.user.name;
+      const response = await axios.post(
+        `${process.env.BASE_URL}api/retrieveLibrary`,
+        { username },
+      );
+      const libraryData: UserModel = response.data.data;
+      return {
+        props: { libraryData },
+      };
+    }
     return {
-      props: { libraryData },
+      redirect: {
+        destination: "/",
+        permanent: false,
+      },
     };
   } catch {
     return {
-      notFound: true,
+      redirect: {
+        destination: "/",
+        permanent: false,
+      },
     };
   }
 };
 
 export default function Library({ libraryData }: { libraryData: UserModel }) {
-  const { status } = useSession();
-
   // Create an empty state to store fetched data
   const [animeLibrary, setAnimeLibrary] = useState<AnimeLibrary[]>();
 

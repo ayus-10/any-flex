@@ -30,7 +30,7 @@ export default function Nav({ genres }: NavProps) {
           </h1>
           <div className="h-[2rem] w-0.5 bg-zinc-600"></div>
           <Link
-            href={pathname === "/" ? `/library/${session?.user?.name}` : "/"}
+            href={pathname === "/" ? "/library/" : "/"}
             className="cursor-pointer text-gray-300 duration-200 ease-in-out hover:text-white"
           >
             {pathname === "/" ? "Library" : "Home"}
