@@ -95,9 +95,9 @@ export default function Home(props: HomeProps) {
           Most Popular
         </h1>
         <div className="mx-auto grid max-w-[1280px] grid-cols-1 place-items-center gap-12 px-4 py-4 sm:grid-cols-2 md:grid-cols-3 md:py-6 lg:grid-cols-4">
-          {ItemsData?.map((item, index) => (
+          {ItemsData?.map((item) => (
             <Item
-              key={index}
+              key={item.id}
               animeData={{
                 id: item.id,
                 name: item.name,

@@ -8,6 +8,7 @@ import { Dispatch, FormEvent, SetStateAction, useRef } from "react";
 import { useSession } from "next-auth/react";
 import { MessageObject } from "@/hooks/useMessage";
 import axios from "axios";
+import { v4 as uuid } from "uuid";
 
 type ItemProps = {
   animeData: AnimeData;
@@ -74,10 +75,10 @@ export default function Item(props: ItemProps) {
             <>
               <p className="px-2 font-bold text-white">Genre</p>
               <ul className="flex flex-wrap gap-2 p-2">
-                {genre.map((item, index) => (
+                {genre.map((item) => (
                   <li
                     className="rounded-sm bg-zinc-700 px-2 text-gray-300"
-                    key={index}
+                    key={uuid()}
                   >
                     {item}
                   </li>

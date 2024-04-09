@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import SearchBar from "./SearchBar";
 import Image from "next/image";
 import Link from "next/link";
+import { v4 as uuid } from "uuid";
 
 type AnimeSearchData = {
   mal_id: number;
@@ -51,10 +52,10 @@ export default function AnimeSearch() {
           className={`w-full grid-cols-1 place-content-center gap-3 rounded-b-lg border-x-[1px] border-b-[1px] border-zinc-600 bg-zinc-900 p-3 md:grid-cols-2 ${search ? "grid" : "hidden"}`}
         >
           {searchData ? (
-            searchData.map((data, index) => (
+            searchData.map((data) => (
               <Link
                 href={`/anime/${data.mal_id}`}
-                key={index}
+                key={uuid()}
                 className="inline-flex max-h-[75px] w-full items-center rounded-sm bg-zinc-800 duration-200 ease-in-out hover:bg-zinc-700"
               >
                 <Image

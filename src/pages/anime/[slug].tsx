@@ -20,6 +20,7 @@ import ToastNotification from "@/components/ToastNotification";
 import useMessage from "@/hooks/useMessage";
 import { getServerSession } from "next-auth";
 import { authOptions } from "../api/auth/[...nextauth]";
+import { v4 as uuid } from "uuid";
 
 type AnimeData = {
   data: {
@@ -227,10 +228,10 @@ export default function Anime(props: AnimeProps) {
                   Genres
                 </h2>
                 <ul className="flex flex-wrap justify-center gap-2 md:max-w-[300px] md:justify-end">
-                  {anime.genres.map((item, index) => (
+                  {anime.genres.map((item) => (
                     <li
                       className="rounded-sm bg-zinc-700 px-2 text-gray-300"
-                      key={index}
+                      key={uuid()}
                     >
                       {item.name}
                     </li>

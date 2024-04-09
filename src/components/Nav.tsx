@@ -4,6 +4,7 @@ import { useState } from "react";
 import Image from "next/image";
 import { useSession, signIn, signOut } from "next-auth/react";
 import { useRouter } from "next/router";
+import { v4 as uuid } from "uuid";
 
 type NavProps = {
   genres?: string[];
@@ -48,8 +49,8 @@ export default function Nav({ genres }: NavProps) {
               onMouseOver={() => setShowDropdown(true)}
               onMouseOut={() => setShowDropdown(false)}
             >
-              {genres?.map((genre, index) => (
-                <li key={index}>
+              {genres?.map((genre) => (
+                <li key={uuid()}>
                   <button className="w-full rounded-lg bg-transparent px-3 py-1 text-left duration-200 ease-in-out hover:bg-zinc-700">
                     {genre}
                   </button>

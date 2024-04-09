@@ -11,6 +11,7 @@ import useMessage from "@/hooks/useMessage";
 import ToastNotification from "@/components/ToastNotification";
 import { getServerSession } from "next-auth";
 import { authOptions } from "./api/auth/[...nextauth]";
+import { v4 as uuid } from "uuid";
 
 export const getServerSideProps: GetServerSideProps = async ({ req, res }) => {
   try {
@@ -126,9 +127,9 @@ export default function Library({ libraryData }: { libraryData: UserModel }) {
         {paginatedLibrary && paginatedLibrary.length > 0 ? (
           <>
             <div className="mx-auto grid w-full max-w-[1280px] grid-cols-1 place-items-center gap-4 py-4 sm:grid-cols-2 md:grid-cols-3 md:py-8 lg:grid-cols-4">
-              {paginatedLibrary.map((anime, index) => (
+              {paginatedLibrary.map((anime) => (
                 <Item
-                  key={index}
+                  key={anime.animeId}
                   animeData={{
                     name: anime.animeName,
                     id: anime.animeId,
@@ -146,7 +147,7 @@ export default function Library({ libraryData }: { libraryData: UserModel }) {
               {Array.from({ length: numberOfPages }).map((_, index) => (
                 <button
                   onClick={() => handlePageChange(index)}
-                  key={index}
+                  key={uuid()}
                   className={`grid h-8 w-8 cursor-pointer place-content-center rounded-[50%] p-2 text-xl font-semibold ${currentIndex === index ? "bg-zinc-800" : "bg-zinc-600"}`}
                 >
                   {index + 1}
