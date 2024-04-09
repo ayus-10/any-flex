@@ -17,8 +17,9 @@ import Head from "next/head";
 import { useSession } from "next-auth/react";
 import { BarLoader } from "react-spinners";
 import ToastNotification from "@/components/ToastNotification";
-import { useSearchParams } from "next/navigation";
 import useMessage from "@/hooks/useMessage";
+import { getServerSession } from "next-auth";
+import { authOptions } from "../api/auth/[...nextauth]";
 
 type AnimeData = {
   data: {
@@ -50,7 +51,11 @@ type AnimeData = {
   status: number;
 };
 
-export const getServerSideProps: GetServerSideProps = async ({ params }) => {
+export const getServerSideProps: GetServerSideProps = async ({
+  req,
+  res,
+  params,
+}) => {
   const animeDataRaw = await fetch(
     "https://api.jikan.moe/v4/anime/" + params?.slug,
   );
@@ -62,10 +67,28 @@ export const getServerSideProps: GetServerSideProps = async ({ params }) => {
     };
   }
 
-  return { props: { animeData } };
+  const session = await getServerSession(req, res, authOptions);
+
+  // This API returns true if currnet anime exists in current user's library
+  const checkItemInLibrary = await axios.post(
+    `${process.env.BASE_URL}api/findInLibrary`,
+    {
+      username: session?.user?.name,
+      animeId: params?.slug,
+    },
+  );
+  const itemInLibrary: boolean = checkItemInLibrary.data;
+
+  return { props: { animeData, itemInLibrary } };
 };
 
-export default function Anime({ animeData }: { animeData: AnimeData }) {
+type AnimeProps = {
+  animeData: AnimeData;
+  itemInLibrary: boolean;
+};
+
+export default function Anime(props: AnimeProps) {
+  const { animeData, itemInLibrary } = props;
   const anime = animeData.data;
 
   const { data: session, status } = useSession();
@@ -75,10 +98,6 @@ export default function Anime({ animeData }: { animeData: AnimeData }) {
   const [showAddToLibrary, setShowAddToLibrary] = useState(false);
 
   const [message, setMessage] = useMessage();
-
-  // This url param is used to conditionally render "Add" or "Edit" button
-  const editParam = useSearchParams();
-  const edit = editParam.get("edit");
 
   const [loading, setLoading] = useState(false); // Used to display loading bar during backend data processing
 
@@ -225,16 +244,13 @@ export default function Anime({ animeData }: { animeData: AnimeData }) {
                     onClick={() => setShowAddToLibrary((prev) => !prev)}
                   >
                     <div className="text-xl md:text-2xl">
-                      {
-                        // This conditional rendering is just for user convenience
-                        edit === "true" ? (
-                          <RiEditCircleFill className="shrink-0" />
-                        ) : (
-                          <IoIosAddCircle className="shrink-0" />
-                        )
-                      }
+                      {itemInLibrary ? (
+                        <RiEditCircleFill className="shrink-0" />
+                      ) : (
+                        <IoIosAddCircle className="shrink-0" />
+                      )}
                     </div>
-                    <span>{edit === "true" ? "Edit" : "Add"}</span>
+                    <span>{itemInLibrary ? "Edit" : "Add"}</span>
                   </button>
                 ) : (
                   <form

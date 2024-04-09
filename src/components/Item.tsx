@@ -110,7 +110,7 @@ export default function Item(props: ItemProps) {
                     className="size-6 rounded-l-md bg-zinc-700 p-1 duration-200 ease-in-out hover:bg-zinc-600"
                     type="button"
                     onClick={() => {
-                      router.push(`/anime/${id}?edit=true`);
+                      router.push(`/anime/${id}`);
                     }}
                   >
                     <MdEditSquare />
